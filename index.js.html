@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>index.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GraphSpreading.html">GraphSpreading</a><ul class='methods'><li data-type='method'><a href="GraphSpreading.html#addPathGraph">addPathGraph</a></li><li data-type='method'><a href="GraphSpreading.html#spreadByPathLink">spreadByPathLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLink">spreadFromSpreadLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLinkByPathGraph">spreadFromSpreadLinkByPathGraph</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLinkByPathLink">spreadFromSpreadLinkByPathLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadNewSpreadLink">spreadNewSpreadLink</a></li><li data-type='method'><a href="GraphSpreading.html#unspreadByPathId">unspreadByPathId</a></li><li data-type='method'><a href="GraphSpreading.html#unspreadFromRemovedSpreadLinkByPrevId">unspreadFromRemovedSpreadLinkByPrevId</a></li></ul></li><li><a href="PathGraph.html">PathGraph</a></li><li><a href="SpreadGraph.html">SpreadGraph</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-rules.html">Семантические права и правила</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">index.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Graph } from 'ancient-graph';
+import async from 'async';
+
+/**
+ * Class capsule for path graph.
+ * 
+ * @class
+ * @description `import { PathGraph } from 'ancient-graph-spreading';`
+ */
+class PathGraph {
+  
+  /**
+   * @param {Graph} graph
+   * @param {string} fromField
+   * @param {string} toField
+   */
+  constructor(graph, fromField, toField) {
+    if (!(graph instanceof Graph)) {
+      throw new Error('Invalid graph.');
+    }
+    if (typeof(fromField) != 'string') {
+      throw new Error('Invalid fromField');
+    }
+    if (typeof(toField) != 'string') {
+      throw new Error('Invalid toField');
+    }
+    
+    this.graph = graph;
+    this.fromField = fromField;
+    this.toField = toField;
+  }
+}
+
+/**
+ * Class capsule for spread graph with `prev`, `path` and `root` special fields.
+ * 
+ * @class
+ * @description `import { SpreadGraph } from 'ancient-graph-spreading';`
+ */
+class SpreadGraph {
+  
+  /**
+   * @param {Graph} graph
+   * @param {string} constantField
+   * @param {string} variableField
+   * @param {SpreadGraph~spreadHandler} spreadHandler
+   */
+  constructor(graph, constantField, variableField, spreadHandler) {
+    if (!(graph instanceof Graph)) {
+      throw new Error('Invalid graph.');
+    }
+    if (typeof(constantField) != 'string') {
+      throw new Error('Invalid constantField');
+    }
+    if (typeof(variableField) != 'string') {
+      throw new Error('Invalid variableField');
+    }
+    if (typeof(spreadHandler) != 'function') {
+      throw new Error('Invalid spreadHandler');
+    }
+    
+    this.graph = graph;
+    this.constantField = constantField;
+    this.variableField = variableField;
+    this.spreadHandler = spreadHandler;
+  }
+}
+
+/**
+ * Handler of spreading link.
+ *
+ * @callback SpreadGraph~spreadHandler
+ * @param {SpreadLink} [prevSpreadLink]
+ * @param {PathGraph} [pathGraph]
+ * @param {PathLink} [pathLink]
+ * @param {SpreadLink} [newSpreadLink]
+ * @param {Function} [callback]
+ */
+
+/**
+ * Class with methods for controlling the spread of the spreadGraph on pathGraph(s).
+ * 
+ * @class
+ * @description `import { GraphSpreading } from 'ancient-graph-spreading';`
+ */
+class GraphSpreading {
+  
+  /**
+   * @param {SpreadGraph} spreadGraph
+   */
+  constructor(spreadGraph) {
+    this.spreadGraph = spreadGraph;
+    this.pathGraphs = [];
+  }
+  
+  /**
+   * @param {PathGraph} pathGraph
+   */
+  addPathGraph(pathGraph) {
+    this.pathGraphs.push(pathGraph);
+  }
+  
+  /**
+   * Spread by pathLink with available spreadLinks.
+   * 
+   * @param {PathGraph} pathGraph
+   * @param {PathLink} pathLink
+   * @param {GraphSpreading~spreadFromSpreadLinkByPathLinkCallback} [handler]
+   * @param {GraphSpreading~spreadByPathLinkCallback} [callback]
+   */
+  spreadByPathLink(pathGraph, pathLink, handler, callback) {
+    this.spreadGraph.graph.fetch({
+      [this.spreadGraph.variableField]: pathLink[pathGraph.fromField]
+    }, undefined, (error, spreadLinks) => {
+      var queue = async.queue((spreadLink, callback) => {
+        this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, (error, id, spreadLink, pathGraph, pathLink) => {
+          if (handler) handler(error, id, spreadLink, pathGraph, pathLink);
+          callback();
+        });
+      });
+      queue.push(spreadLinks, (error) => {
+        if (callback) callback();
+      });
+    });
+  }
+  
+  /**
+   * Optional callback.
+   *
+   * @callback GraphSpreading~spreadByPathLinkCallback
+   */
+  
+  /**
+   * Spread root of tree spreadLink.
+   * 
+   * @param {SpreadLink} newSpreadLink
+   * @param {Graph~insertCallback} [callback]
+   */
+  spreadNewSpreadLink(newSpreadLink, callback) {
+    this.spreadGraph.spreadHandler(undefined, undefined, undefined, newSpreadLink, (newSpreadLink) => {
+      if (newSpreadLink) this.spreadGraph.graph.insert(newSpreadLink, callback);
+    });
+  }
+  
+  /**
+   * Spread by all available paths from spreadLink.
+   * 
+   * @param {SpreadLink} spreadLink
+   * @param {GraphSpreading~spreadFromSpreadLinkByPathGraphHandler} [handler]
+   * @param {GraphSpreading~spreadFromSpreadLinkByPathGraphCallback} [callback]
+   */
+  spreadFromSpreadLink(spreadLink, handler, callback) {
+    var queue = async.queue((pathGraph, callback) => {
+      this.spreadFromSpreadLinkByPathGraph(spreadLink, pathGraph, handler, callback);
+    });
+    queue.drain = () => { if (callback) callback(); }
+    queue.push(this.pathGraphs);
+  }
+  
+  /**
+   * Spread by all available paths in pathGraph from spreadLink.
+   * 
+   * @param {SpreadLink} spreadLink
+   * @param {PathGraph} pathGraph
+   * @param {GraphSpreading~spreadFromSpreadLinkByPathGraphHandler} [handler]
+   * @param {GraphSpreading~spreadFromSpreadLinkByPathGraphCallback} [callback]
+   */
+  spreadFromSpreadLinkByPathGraph(spreadLink, pathGraph, handler, callback) {
+    pathGraph.graph.fetch({
+      [pathGraph.fromField]: spreadLink[this.spreadGraph.variableField]
+    }, undefined, (error, pathLinks) => {
+      var queue = async.queue((pathLink, callback) => {
+        this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, (error, id) => {
+          if (handler) handler(error, id, spreadLink, pathGraph, pathLink);
+          callback();
+        });
+      });
+      queue.drain = () => { if (callback) callback(); }
+      queue.push(pathLinks);
+    });
+  }
+  
+  /**
+   * Optional handler. If present, called with an error object as the first argument and, if no error, others arguments with results of spreading.
+   *
+   * @callback GraphSpreading~spreadFromSpreadLinkByPathGraphHandler
+   * @param {Error} [error]
+   * @param {string} [id]
+   * @param {SpreadLink} [spreadLink]
+   * @param {PathGraph} [pathGraph]
+   * @param {PathLink} [pathLink]
+   */
+  
+  /**
+   * Optional callback.
+   *
+   * @callback GraphSpreading~spreadFromSpreadLinkByPathGraphCallback
+   */
+  
+  /**
+   * Spread by pathLink in pathGraph from spreadLink.
+   * 
+   * @param {SpreadLink} spreadLink
+   * @param {PathGraph} pathGraph
+   * @param {PathLink} pathLink
+   * @param {GraphSpreading~spreadFromSpreadLinkByPathLinkCallback} [callback]
+   */
+  spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, callback) {
+    this.spreadGraph.spreadHandler(spreadLink, pathGraph, pathLink, {
+      [this.spreadGraph.constantField]: spreadLink[this.spreadGraph.constantField],
+      [this.spreadGraph.variableField]: pathLink[pathGraph.toField],
+      prev: spreadLink.id,
+      path: pathLink.id,
+      root: spreadLink.root?spreadLink.root:spreadLink.id
+    }, (newSpreadLink) => {
+      if (newSpreadLink) this.spreadGraph.graph.insert(newSpreadLink, (error, id) => {
+        if (callback) callback(error, id, spreadLink, pathGraph, pathLink);
+      });
+    });
+  }
+  
+  /**
+   * Optional callback. If present, called with an error object as the first argument and, if no error, the unique id of inserted spread link as the second.
+   *
+   * @callback GraphSpreading~spreadFromSpreadLinkByPathLinkCallback
+   * @param {Error} [error]
+   * @param {string} [id]
+   * @param {SpreadLink} [spreadLink]
+   * @param {PathGraph} [pathGraph]
+   * @param {PathLink} [pathLink]
+   */
+  
+  /**
+   * Remove spreadLinks with specific prev spreadLink id.
+   * 
+   * @param {string} spreadLinkId
+   * @param {GraphSpreading~unspreadFromRemovedSpreadLinkByPrevIdHandler} [handler]
+   * @param {GraphSpreading~unspreadFromRemovedSpreadLinkByPrevIdCallback} [callback]
+   */
+  unspreadFromRemovedSpreadLinkByPrevId(spreadLinkId, handler, callback) {
+    if (handler) {
+      this.spreadGraph.graph.fetch({ prev: spreadLinkId }, undefined, (error, spreadLinks) => {
+        if (error) {
+          if (callback) callback(error);
+        } else {
+          var queue = async.queue((spreadLink, next) => {
+            this.spreadGraph.graph.remove(spreadLink.id, (error, count) => {
+              handler(error, spreadLink);
+              next();
+            });
+          });
+          if (callback) queue.drain = () => { callback(undefined, spreadLinks.length); }
+          queue.push(spreadLinks);
+        }
+      });
+    } else {
+      this.spreadGraph.graph.remove({ prev: spreadLinkId }, callback);
+    }
+  }
+  
+  /**
+   * Optional handler. If present, called with an error object as the first argument and, if no error, others arguments with results of unspreading.
+   *
+   * @callback GraphSpreading~unspreadFromRemovedSpreadLinkByPrevIdHandler
+   * @param {Error} [error]
+   * @param {SpreadLink} [spreadLink]
+   */
+  
+  /**
+   * Optional callback.
+   *
+   * @callback GraphSpreading~unspreadFromRemovedSpreadLinkByPrevIdCallback
+   * @param {Error} [error]
+   * @param {number} [count]
+   */
+  
+  /**
+   * Remove spreadLinks with specific path pathLink id.
+   * 
+   * @param {string} pathLinkId
+   * @param {GraphSpreading~unspreadByPathIdHandler} [handler]
+   * @param {GraphSpreading~unspreadByPathIdCallback} [callback]
+   */
+  unspreadByPathId(pathLinkId, handler, callback) {
+    if (handler) {
+      this.spreadGraph.graph.fetch({ path: pathLinkId }, undefined, (error, spreadLinks) => {
+        if (error) {
+          if (callback) callback(error);
+        } else {
+          var queue = async.queue((spreadLink, next) => {
+            this.spreadGraph.graph.remove(spreadLink.id, (error, count) => {
+              handler(error, spreadLink);
+              next();
+            });
+          });
+          if (callback) queue.drain = () => { callback(undefined, spreadLinks.length); }
+          queue.push(spreadLinks);
+        }
+      });
+    } else {
+      this.spreadGraph.graph.remove({ path: pathLinkId }, callback);
+    }
+  }
+  
+  /**
+   * Optional handler. If present, called with an error object as the first argument and, if no error, others arguments with results of unspreading.
+   *
+   * @callback GraphSpreading~unspreadByPathIdHandler
+   * @param {Error} [error]
+   * @param {SpreadLink} [spreadLink]
+   */
+  
+  /**
+   * Optional callback.
+   *
+   * @callback GraphSpreading~unspreadByPathIdCallback
+   * @param {Error} [error]
+   * @param {number} [count]
+   */
+}
+
+export { PathGraph, SpreadGraph, GraphSpreading };</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Sep 05 2016 08:06:36 GMT+0000 (UTC) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>index.js - Documentation</title>
+    <title>spreading.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -23,12 +23,12 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GraphSpreading.html">GraphSpreading</a><ul class='methods'><li data-type='method'><a href="GraphSpreading.html#addPathGraph">addPathGraph</a></li><li data-type='method'><a href="GraphSpreading.html#spreadByPathLink">spreadByPathLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLink">spreadFromSpreadLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLinkByPathGraph">spreadFromSpreadLinkByPathGraph</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLinkByPathLink">spreadFromSpreadLinkByPathLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadNewSpreadLink">spreadNewSpreadLink</a></li><li data-type='method'><a href="GraphSpreading.html#unspreadByPathId">unspreadByPathId</a></li><li data-type='method'><a href="GraphSpreading.html#unspreadFromRemovedSpreadLinkByPrevId">unspreadFromRemovedSpreadLinkByPrevId</a></li></ul></li><li><a href="PathGraph.html">PathGraph</a></li><li><a href="SpreadGraph.html">SpreadGraph</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-rules.html">Семантические права и правила</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GraphSpreading.html">GraphSpreading</a><ul class='methods'><li data-type='method'><a href="GraphSpreading.html#addPathGraph">addPathGraph</a></li><li data-type='method'><a href="GraphSpreading.html#spreadByPathLink">spreadByPathLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLink">spreadFromSpreadLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLinkByPathGraph">spreadFromSpreadLinkByPathGraph</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLinkByPathLink">spreadFromSpreadLinkByPathLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadNewSpreadLink">spreadNewSpreadLink</a></li><li data-type='method'><a href="GraphSpreading.html#unspreadByPathId">unspreadByPathId</a></li><li data-type='method'><a href="GraphSpreading.html#unspreadFromRemovedSpreadLinkByPrevId">unspreadFromRemovedSpreadLinkByPrevId</a></li></ul></li><li><a href="PathGraph.html">PathGraph</a><ul class='methods'><li data-type='method'><a href="PathGraph.html#insert">insert</a></li><li data-type='method'><a href="PathGraph.html#remove">remove</a></li><li data-type='method'><a href="PathGraph.html#update">update</a></li></ul></li><li><a href="QueueSpreading.html">QueueSpreading</a><ul class='methods'><li data-type='method'><a href="QueueSpreading.html#_getGraph">_getGraph</a></li><li data-type='method'><a href="QueueSpreading.html#insertedPathLink">insertedPathLink</a></li><li data-type='method'><a href="QueueSpreading.html#insertedSpreadLink">insertedSpreadLink</a></li><li data-type='method'><a href="QueueSpreading.html#mayBeEndedLaunched">mayBeEndedLaunched</a></li><li data-type='method'><a href="QueueSpreading.html#removedPathLink">removedPathLink</a></li><li data-type='method'><a href="QueueSpreading.html#removedSpreadLink">removedSpreadLink</a></li><li data-type='method'><a href="QueueSpreading.html#updatedLaunchedUnspreadPathLink">updatedLaunchedUnspreadPathLink</a></li><li data-type='method'><a href="QueueSpreading.html#updatedSourceOrTargetPathLink">updatedSourceOrTargetPathLink</a></li></ul></li><li><a href="SpreadGraph.html">SpreadGraph</a><ul class='methods'><li data-type='method'><a href="SpreadGraph.html#_spreadingHandler">_spreadingHandler</a></li><li data-type='method'><a href="SpreadGraph.html#insert">insert</a></li><li data-type='method'><a href="SpreadGraph.html#remove">remove</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#factoryPathGraph">factoryPathGraph</a></li><li><a href="global.html#factorySpreadGraph">factorySpreadGraph</a></li></ul>
 </nav>
 
 <div id="main">
     
-    <h1 class="page-title">index.js</h1>
+    <h1 class="page-title">spreading.js</h1>
     
 
     
@@ -38,87 +38,10 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import { Graph } from 'ancient-graph';
-import async from 'async';
+            <pre class="prettyprint source linenums"><code>import async from 'async';
 
 /**
- * Class capsule for path graph.
- * 
- * @class
- * @description `import { PathGraph } from 'ancient-graph-spreading';`
- */
-class PathGraph {
-  
-  /**
-   * @param {Graph} graph
-   * @param {string} fromField
-   * @param {string} toField
-   */
-  constructor(graph, fromField, toField) {
-    if (!(graph instanceof Graph)) {
-      throw new Error('Invalid graph.');
-    }
-    if (typeof(fromField) != 'string') {
-      throw new Error('Invalid fromField');
-    }
-    if (typeof(toField) != 'string') {
-      throw new Error('Invalid toField');
-    }
-    
-    this.graph = graph;
-    this.fromField = fromField;
-    this.toField = toField;
-  }
-}
-
-/**
- * Class capsule for spread graph with `prev`, `path` and `root` special fields.
- * 
- * @class
- * @description `import { SpreadGraph } from 'ancient-graph-spreading';`
- */
-class SpreadGraph {
-  
-  /**
-   * @param {Graph} graph
-   * @param {string} constantField
-   * @param {string} variableField
-   * @param {SpreadGraph~spreadHandler} spreadHandler
-   */
-  constructor(graph, constantField, variableField, spreadHandler) {
-    if (!(graph instanceof Graph)) {
-      throw new Error('Invalid graph.');
-    }
-    if (typeof(constantField) != 'string') {
-      throw new Error('Invalid constantField');
-    }
-    if (typeof(variableField) != 'string') {
-      throw new Error('Invalid variableField');
-    }
-    if (typeof(spreadHandler) != 'function') {
-      throw new Error('Invalid spreadHandler');
-    }
-    
-    this.graph = graph;
-    this.constantField = constantField;
-    this.variableField = variableField;
-    this.spreadHandler = spreadHandler;
-  }
-}
-
-/**
- * Handler of spreading link.
- *
- * @callback SpreadGraph~spreadHandler
- * @param {SpreadLink} [prevSpreadLink]
- * @param {PathGraph} [pathGraph]
- * @param {PathLink} [pathLink]
- * @param {SpreadLink} [newSpreadLink]
- * @param {Function} [callback]
- */
-
-/**
- * Class with methods for controlling the spread of the spreadGraph on pathGraph(s).
+ * Class with methods for spread and unspread of the spreadGraph on pathGraph(s).
  * 
  * @class
  * @description `import { GraphSpreading } from 'ancient-graph-spreading';`
@@ -145,22 +68,27 @@ class GraphSpreading {
    * 
    * @param {PathGraph} pathGraph
    * @param {PathLink} pathLink
+   * @param {Object} [context]
    * @param {GraphSpreading~spreadFromSpreadLinkByPathLinkCallback} [handler]
    * @param {GraphSpreading~spreadByPathLinkCallback} [callback]
    */
-  spreadByPathLink(pathGraph, pathLink, handler, callback) {
-    this.spreadGraph.graph.fetch({
-      [this.spreadGraph.variableField]: pathLink[pathGraph.fromField]
+  spreadByPathLink(pathGraph, pathLink, context, handler, callback) {
+    this.spreadGraph.fetch({
+      [this.spreadGraph._variableField]: pathLink[pathGraph._fromField]
     }, undefined, (error, spreadLinks) => {
-      var queue = async.queue((spreadLink, callback) => {
-        this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, (error, id, spreadLink, pathGraph, pathLink) => {
-          if (handler) handler(error, id, spreadLink, pathGraph, pathLink);
-          callback();
+      if (spreadLinks.length) {
+        var queue = async.queue((spreadLink, callback) => {
+          this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, (error, id, spreadLink, pathGraph, pathLink) => {
+            if (handler) handler(error, id, spreadLink, pathGraph, pathLink);
+            callback();
+          });
         });
-      });
-      queue.push(spreadLinks, (error) => {
+        queue.push(spreadLinks, (error) => {
+          if (callback) callback();
+        });
+      } else {
         if (callback) callback();
-      });
+      }
     });
   }
   
@@ -174,11 +102,12 @@ class GraphSpreading {
    * Spread root of tree spreadLink.
    * 
    * @param {SpreadLink} newSpreadLink
+   * @param {Object} [context]
    * @param {Graph~insertCallback} [callback]
    */
-  spreadNewSpreadLink(newSpreadLink, callback) {
-    this.spreadGraph.spreadHandler(undefined, undefined, undefined, newSpreadLink, (newSpreadLink) => {
-      if (newSpreadLink) this.spreadGraph.graph.insert(newSpreadLink, callback);
+  spreadNewSpreadLink(newSpreadLink, context, callback) {
+    this.spreadGraph._spreadingHandler(undefined, undefined, undefined, newSpreadLink, context, (newSpreadLink) => {
+      if (newSpreadLink) this.spreadGraph.insert(newSpreadLink, callback, context);
     });
   }
   
@@ -186,12 +115,13 @@ class GraphSpreading {
    * Spread by all available paths from spreadLink.
    * 
    * @param {SpreadLink} spreadLink
+   * @param {Object} [context]
    * @param {GraphSpreading~spreadFromSpreadLinkByPathGraphHandler} [handler]
    * @param {GraphSpreading~spreadFromSpreadLinkByPathGraphCallback} [callback]
    */
-  spreadFromSpreadLink(spreadLink, handler, callback) {
+  spreadFromSpreadLink(spreadLink, context, handler, callback) {
     var queue = async.queue((pathGraph, callback) => {
-      this.spreadFromSpreadLinkByPathGraph(spreadLink, pathGraph, handler, callback);
+      this.spreadFromSpreadLinkByPathGraph(spreadLink, pathGraph, context, handler, callback);
     });
     queue.drain = () => { if (callback) callback(); }
     queue.push(this.pathGraphs);
@@ -205,12 +135,12 @@ class GraphSpreading {
    * @param {GraphSpreading~spreadFromSpreadLinkByPathGraphHandler} [handler]
    * @param {GraphSpreading~spreadFromSpreadLinkByPathGraphCallback} [callback]
    */
-  spreadFromSpreadLinkByPathGraph(spreadLink, pathGraph, handler, callback) {
-    pathGraph.graph.fetch({
-      [pathGraph.fromField]: spreadLink[this.spreadGraph.variableField]
+  spreadFromSpreadLinkByPathGraph(spreadLink, pathGraph, context, handler, callback) {
+    pathGraph.fetch({
+      [pathGraph._fromField]: spreadLink[this.spreadGraph._variableField]
     }, undefined, (error, pathLinks) => {
       var queue = async.queue((pathLink, callback) => {
-        this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, (error, id) => {
+        this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, (error, id) => {
           if (handler) handler(error, id, spreadLink, pathGraph, pathLink);
           callback();
         });
@@ -243,19 +173,20 @@ class GraphSpreading {
    * @param {SpreadLink} spreadLink
    * @param {PathGraph} pathGraph
    * @param {PathLink} pathLink
+   * @param {Object} [context]
    * @param {GraphSpreading~spreadFromSpreadLinkByPathLinkCallback} [callback]
    */
-  spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, callback) {
-    this.spreadGraph.spreadHandler(spreadLink, pathGraph, pathLink, {
-      [this.spreadGraph.constantField]: spreadLink[this.spreadGraph.constantField],
-      [this.spreadGraph.variableField]: pathLink[pathGraph.toField],
+  spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, callback) {
+    this.spreadGraph._spreadingHandler(spreadLink, pathGraph, pathLink, {
+      [this.spreadGraph._constantField]: spreadLink[this.spreadGraph._constantField],
+      [this.spreadGraph._variableField]: pathLink[pathGraph._toField],
       prev: spreadLink.id,
       path: pathLink.id,
       root: spreadLink.root?spreadLink.root:spreadLink.id
-    }, (newSpreadLink) => {
-      if (newSpreadLink) this.spreadGraph.graph.insert(newSpreadLink, (error, id) => {
+    }, context, (newSpreadLink) => {
+      if (newSpreadLink) this.spreadGraph.insert(newSpreadLink, (error, id) => {
         if (callback) callback(error, id, spreadLink, pathGraph, pathLink);
-      });
+      }, context);
     });
   }
   
@@ -274,27 +205,28 @@ class GraphSpreading {
    * Remove spreadLinks with specific prev spreadLink id.
    * 
    * @param {string} spreadLinkId
+   * @param {Object} [context]
    * @param {GraphSpreading~unspreadFromRemovedSpreadLinkByPrevIdHandler} [handler]
    * @param {GraphSpreading~unspreadFromRemovedSpreadLinkByPrevIdCallback} [callback]
    */
-  unspreadFromRemovedSpreadLinkByPrevId(spreadLinkId, handler, callback) {
+  unspreadFromRemovedSpreadLinkByPrevId(spreadLinkId, context, handler, callback) {
     if (handler) {
-      this.spreadGraph.graph.fetch({ prev: spreadLinkId }, undefined, (error, spreadLinks) => {
+      this.spreadGraph.fetch({ prev: spreadLinkId }, undefined, (error, spreadLinks) => {
         if (error) {
           if (callback) callback(error);
         } else {
           var queue = async.queue((spreadLink, next) => {
-            this.spreadGraph.graph.remove(spreadLink.id, (error, count) => {
+            this.spreadGraph.remove(spreadLink.id, (error, count) => {
               handler(error, spreadLink);
               next();
-            });
+            }, context);
           });
           if (callback) queue.drain = () => { callback(undefined, spreadLinks.length); }
           queue.push(spreadLinks);
         }
       });
     } else {
-      this.spreadGraph.graph.remove({ prev: spreadLinkId }, callback);
+      this.spreadGraph.remove({ prev: spreadLinkId }, callback, context);
     }
   }
   
@@ -318,27 +250,28 @@ class GraphSpreading {
    * Remove spreadLinks with specific path pathLink id.
    * 
    * @param {string} pathLinkId
+   * @param {Object} [context]
    * @param {GraphSpreading~unspreadByPathIdHandler} [handler]
    * @param {GraphSpreading~unspreadByPathIdCallback} [callback]
    */
-  unspreadByPathId(pathLinkId, handler, callback) {
+  unspreadByPathId(pathLinkId, context, handler, callback) {
     if (handler) {
-      this.spreadGraph.graph.fetch({ path: pathLinkId }, undefined, (error, spreadLinks) => {
+      this.spreadGraph.fetch({ path: pathLinkId }, undefined, (error, spreadLinks) => {
         if (error) {
           if (callback) callback(error);
         } else {
           var queue = async.queue((spreadLink, next) => {
-            this.spreadGraph.graph.remove(spreadLink.id, (error, count) => {
+            this.spreadGraph.remove(spreadLink.id, (error, count) => {
               handler(error, spreadLink);
               next();
-            });
+            }, context);
           });
           if (callback) queue.drain = () => { callback(undefined, spreadLinks.length); }
           queue.push(spreadLinks);
         }
       });
     } else {
-      this.spreadGraph.graph.remove({ path: pathLinkId }, callback);
+      this.spreadGraph.remove({ path: pathLinkId }, callback, context);
     }
   }
   
@@ -359,7 +292,7 @@ class GraphSpreading {
    */
 }
 
-export { PathGraph, SpreadGraph, GraphSpreading };</code></pre>
+export { GraphSpreading };</code></pre>
         </article>
     </section>
 
@@ -371,7 +304,7 @@ export { PathGraph, SpreadGraph, GraphSpreading };</code></pre>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Sep 05 2016 08:06:36 GMT+0000 (UTC) using the Minami theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Sep 10 2016 07:03:19 GMT+0000 (UTC) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

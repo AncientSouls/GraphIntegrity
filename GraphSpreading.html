@@ -23,7 +23,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GraphSpreading.html">GraphSpreading</a><ul class='methods'><li data-type='method'><a href="GraphSpreading.html#addPathGraph">addPathGraph</a></li><li data-type='method'><a href="GraphSpreading.html#spreadByPathLink">spreadByPathLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLink">spreadFromSpreadLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLinkByPathGraph">spreadFromSpreadLinkByPathGraph</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLinkByPathLink">spreadFromSpreadLinkByPathLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadNewSpreadLink">spreadNewSpreadLink</a></li><li data-type='method'><a href="GraphSpreading.html#unspreadByPathId">unspreadByPathId</a></li><li data-type='method'><a href="GraphSpreading.html#unspreadFromRemovedSpreadLinkByPrevId">unspreadFromRemovedSpreadLinkByPrevId</a></li></ul></li><li><a href="PathGraph.html">PathGraph</a></li><li><a href="SpreadGraph.html">SpreadGraph</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-rules.html">Семантические права и правила</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GraphSpreading.html">GraphSpreading</a><ul class='methods'><li data-type='method'><a href="GraphSpreading.html#addPathGraph">addPathGraph</a></li><li data-type='method'><a href="GraphSpreading.html#spreadByPathLink">spreadByPathLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLink">spreadFromSpreadLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLinkByPathGraph">spreadFromSpreadLinkByPathGraph</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLinkByPathLink">spreadFromSpreadLinkByPathLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadNewSpreadLink">spreadNewSpreadLink</a></li><li data-type='method'><a href="GraphSpreading.html#unspreadByPathId">unspreadByPathId</a></li><li data-type='method'><a href="GraphSpreading.html#unspreadFromRemovedSpreadLinkByPrevId">unspreadFromRemovedSpreadLinkByPrevId</a></li></ul></li><li><a href="PathGraph.html">PathGraph</a><ul class='methods'><li data-type='method'><a href="PathGraph.html#insert">insert</a></li><li data-type='method'><a href="PathGraph.html#remove">remove</a></li><li data-type='method'><a href="PathGraph.html#update">update</a></li></ul></li><li><a href="QueueSpreading.html">QueueSpreading</a><ul class='methods'><li data-type='method'><a href="QueueSpreading.html#_getGraph">_getGraph</a></li><li data-type='method'><a href="QueueSpreading.html#insertedPathLink">insertedPathLink</a></li><li data-type='method'><a href="QueueSpreading.html#insertedSpreadLink">insertedSpreadLink</a></li><li data-type='method'><a href="QueueSpreading.html#mayBeEndedLaunched">mayBeEndedLaunched</a></li><li data-type='method'><a href="QueueSpreading.html#removedPathLink">removedPathLink</a></li><li data-type='method'><a href="QueueSpreading.html#removedSpreadLink">removedSpreadLink</a></li><li data-type='method'><a href="QueueSpreading.html#updatedLaunchedUnspreadPathLink">updatedLaunchedUnspreadPathLink</a></li><li data-type='method'><a href="QueueSpreading.html#updatedSourceOrTargetPathLink">updatedSourceOrTargetPathLink</a></li></ul></li><li><a href="SpreadGraph.html">SpreadGraph</a><ul class='methods'><li data-type='method'><a href="SpreadGraph.html#_spreadingHandler">_spreadingHandler</a></li><li data-type='method'><a href="SpreadGraph.html#insert">insert</a></li><li data-type='method'><a href="SpreadGraph.html#remove">remove</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#factoryPathGraph">factoryPathGraph</a></li><li><a href="global.html#factorySpreadGraph">factorySpreadGraph</a></li></ul>
 </nav>
 
 <div id="main">
@@ -44,7 +44,7 @@
         GraphSpreading
         </h2>
         
-            <div class="class-description"><p>Class with methods for controlling the spread of the spreadGraph on pathGraph(s).</p></div>
+            <div class="class-description"><p>Class with methods for spread and unspread of the spreadGraph on pathGraph(s).</p></div>
         
     
 </header>
@@ -158,7 +158,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line86">line 86</a>
+        <a href="spreading.js.html">spreading.js</a>, <a href="spreading.js.html#line9">line 9</a>
     </li></ul></dd>
     
 
@@ -303,7 +303,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line99">line 99</a>
+        <a href="spreading.js.html">spreading.js</a>, <a href="spreading.js.html#line22">line 22</a>
     </li></ul></dd>
     
 
@@ -334,7 +334,7 @@
 
     
 
-    <h4 class="name" id="spreadByPathLink"><span class="type-signature"></span>spreadByPathLink<span class="signature">(pathGraph, pathLink, handler<span class="signature-attributes">opt</span>, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="spreadByPathLink"><span class="type-signature"></span>spreadByPathLink<span class="signature">(pathGraph, pathLink, context<span class="signature-attributes">opt</span>, handler<span class="signature-attributes">opt</span>, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -424,6 +424,39 @@
 
             
                 <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
                 
 
                 
@@ -541,7 +574,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line111">line 111</a>
+        <a href="spreading.js.html">spreading.js</a>, <a href="spreading.js.html#line35">line 35</a>
     </li></ul></dd>
     
 
@@ -572,7 +605,7 @@
 
     
 
-    <h4 class="name" id="spreadFromSpreadLink"><span class="type-signature"></span>spreadFromSpreadLink<span class="signature">(spreadLink, handler<span class="signature-attributes">opt</span>, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="spreadFromSpreadLink"><span class="type-signature"></span>spreadFromSpreadLink<span class="signature">(spreadLink, context<span class="signature-attributes">opt</span>, handler<span class="signature-attributes">opt</span>, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -631,6 +664,39 @@
 
             
                 <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
                 
 
                 
@@ -748,7 +814,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line152">line 152</a>
+        <a href="spreading.js.html">spreading.js</a>, <a href="spreading.js.html#line82">line 82</a>
     </li></ul></dd>
     
 
@@ -986,7 +1052,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line168">line 168</a>
+        <a href="spreading.js.html">spreading.js</a>, <a href="spreading.js.html#line98">line 98</a>
     </li></ul></dd>
     
 
@@ -1017,7 +1083,7 @@
 
     
 
-    <h4 class="name" id="spreadFromSpreadLinkByPathLink"><span class="type-signature"></span>spreadFromSpreadLinkByPathLink<span class="signature">(spreadLink, pathGraph, pathLink, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="spreadFromSpreadLinkByPathLink"><span class="type-signature"></span>spreadFromSpreadLinkByPathLink<span class="signature">(spreadLink, pathGraph, pathLink, context<span class="signature-attributes">opt</span>, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -1155,6 +1221,39 @@
 
         <tr>
             
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>callback</code></td>
             
 
@@ -1222,7 +1321,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line208">line 208</a>
+        <a href="spreading.js.html">spreading.js</a>, <a href="spreading.js.html#line139">line 139</a>
     </li></ul></dd>
     
 
@@ -1253,7 +1352,7 @@
 
     
 
-    <h4 class="name" id="spreadNewSpreadLink"><span class="type-signature"></span>spreadNewSpreadLink<span class="signature">(newSpreadLink, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="spreadNewSpreadLink"><span class="type-signature"></span>spreadNewSpreadLink<span class="signature">(newSpreadLink, context<span class="signature-attributes">opt</span>, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -1312,6 +1411,39 @@
 
             
                 <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
                 
 
                 
@@ -1396,7 +1528,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line139">line 139</a>
+        <a href="spreading.js.html">spreading.js</a>, <a href="spreading.js.html#line68">line 68</a>
     </li></ul></dd>
     
 
@@ -1427,7 +1559,7 @@
 
     
 
-    <h4 class="name" id="unspreadByPathId"><span class="type-signature"></span>unspreadByPathId<span class="signature">(pathLinkId, handler<span class="signature-attributes">opt</span>, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="unspreadByPathId"><span class="type-signature"></span>unspreadByPathId<span class="signature">(pathLinkId, context<span class="signature-attributes">opt</span>, handler<span class="signature-attributes">opt</span>, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -1486,6 +1618,39 @@
 
             
                 <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
                 
 
                 
@@ -1603,7 +1768,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line284">line 284</a>
+        <a href="spreading.js.html">spreading.js</a>, <a href="spreading.js.html#line217">line 217</a>
     </li></ul></dd>
     
 
@@ -1634,7 +1799,7 @@
 
     
 
-    <h4 class="name" id="unspreadFromRemovedSpreadLinkByPrevId"><span class="type-signature"></span>unspreadFromRemovedSpreadLinkByPrevId<span class="signature">(spreadLinkId, handler<span class="signature-attributes">opt</span>, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="unspreadFromRemovedSpreadLinkByPrevId"><span class="type-signature"></span>unspreadFromRemovedSpreadLinkByPrevId<span class="signature">(spreadLinkId, context<span class="signature-attributes">opt</span>, handler<span class="signature-attributes">opt</span>, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -1693,6 +1858,39 @@
 
             
                 <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
                 
 
                 
@@ -1810,7 +2008,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line240">line 240</a>
+        <a href="spreading.js.html">spreading.js</a>, <a href="spreading.js.html#line172">line 172</a>
     </li></ul></dd>
     
 
@@ -1898,7 +2096,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line127">line 127</a>
+        <a href="spreading.js.html">spreading.js</a>, <a href="spreading.js.html#line55">line 55</a>
     </li></ul></dd>
     
 
@@ -1980,7 +2178,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line194">line 194</a>
+        <a href="spreading.js.html">spreading.js</a>, <a href="spreading.js.html#line124">line 124</a>
     </li></ul></dd>
     
 
@@ -2255,7 +2453,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line183">line 183</a>
+        <a href="spreading.js.html">spreading.js</a>, <a href="spreading.js.html#line113">line 113</a>
     </li></ul></dd>
     
 
@@ -2530,7 +2728,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line222">line 222</a>
+        <a href="spreading.js.html">spreading.js</a>, <a href="spreading.js.html#line153">line 153</a>
     </li></ul></dd>
     
 
@@ -2706,7 +2904,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line313">line 313</a>
+        <a href="spreading.js.html">spreading.js</a>, <a href="spreading.js.html#line246">line 246</a>
     </li></ul></dd>
     
 
@@ -2882,7 +3080,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line305">line 305</a>
+        <a href="spreading.js.html">spreading.js</a>, <a href="spreading.js.html#line238">line 238</a>
     </li></ul></dd>
     
 
@@ -3058,7 +3256,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line269">line 269</a>
+        <a href="spreading.js.html">spreading.js</a>, <a href="spreading.js.html#line201">line 201</a>
     </li></ul></dd>
     
 
@@ -3234,7 +3432,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line261">line 261</a>
+        <a href="spreading.js.html">spreading.js</a>, <a href="spreading.js.html#line193">line 193</a>
     </li></ul></dd>
     
 
@@ -3276,7 +3474,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Sep 05 2016 08:06:36 GMT+0000 (UTC) using the Minami theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Sep 10 2016 07:03:19 GMT+0000 (UTC) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

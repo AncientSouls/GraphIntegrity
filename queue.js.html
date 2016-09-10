@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>queue.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GraphSpreading.html">GraphSpreading</a><ul class='methods'><li data-type='method'><a href="GraphSpreading.html#addPathGraph">addPathGraph</a></li><li data-type='method'><a href="GraphSpreading.html#spreadByPathLink">spreadByPathLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLink">spreadFromSpreadLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLinkByPathGraph">spreadFromSpreadLinkByPathGraph</a></li><li data-type='method'><a href="GraphSpreading.html#spreadFromSpreadLinkByPathLink">spreadFromSpreadLinkByPathLink</a></li><li data-type='method'><a href="GraphSpreading.html#spreadNewSpreadLink">spreadNewSpreadLink</a></li><li data-type='method'><a href="GraphSpreading.html#unspreadByPathId">unspreadByPathId</a></li><li data-type='method'><a href="GraphSpreading.html#unspreadFromRemovedSpreadLinkByPrevId">unspreadFromRemovedSpreadLinkByPrevId</a></li></ul></li><li><a href="PathGraph.html">PathGraph</a><ul class='methods'><li data-type='method'><a href="PathGraph.html#insert">insert</a></li><li data-type='method'><a href="PathGraph.html#remove">remove</a></li><li data-type='method'><a href="PathGraph.html#update">update</a></li></ul></li><li><a href="QueueSpreading.html">QueueSpreading</a><ul class='methods'><li data-type='method'><a href="QueueSpreading.html#_getGraph">_getGraph</a></li><li data-type='method'><a href="QueueSpreading.html#insertedPathLink">insertedPathLink</a></li><li data-type='method'><a href="QueueSpreading.html#insertedSpreadLink">insertedSpreadLink</a></li><li data-type='method'><a href="QueueSpreading.html#mayBeEndedLaunched">mayBeEndedLaunched</a></li><li data-type='method'><a href="QueueSpreading.html#removedPathLink">removedPathLink</a></li><li data-type='method'><a href="QueueSpreading.html#removedSpreadLink">removedSpreadLink</a></li><li data-type='method'><a href="QueueSpreading.html#updatedLaunchedUnspreadPathLink">updatedLaunchedUnspreadPathLink</a></li><li data-type='method'><a href="QueueSpreading.html#updatedSourceOrTargetPathLink">updatedSourceOrTargetPathLink</a></li></ul></li><li><a href="SpreadGraph.html">SpreadGraph</a><ul class='methods'><li data-type='method'><a href="SpreadGraph.html#_spreadingHandler">_spreadingHandler</a></li><li data-type='method'><a href="SpreadGraph.html#insert">insert</a></li><li data-type='method'><a href="SpreadGraph.html#remove">remove</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#factoryPathGraph">factoryPathGraph</a></li><li><a href="global.html#factorySpreadGraph">factorySpreadGraph</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">queue.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Class with methods for easy subscription to spreading on graph events.
+ * 
+ * @class
+ * @description `import { QueueSpreading } from 'ancient-graph-spreading';`
+ */
+class QueueSpreading {
+  
+  /**
+   * @param {GraphSpreading} graphSpreading
+   */
+  constructor(graphSpreading) {
+    this.graphSpreading = graphSpreading;
+    if (this._getGraph == QueueSpreading.prototype._getGraph) {
+      throw new Error('Method `_getGraph` is not adapted.');
+    }
+  }
+  
+  /**
+   * Should return graph instance by link id from process field.
+   * 
+   * @param {string} linkId
+   * @return {Graph} graph
+   * @throws {Error} If graph is not founded
+   */
+  _getGraph(linkId) {}
+  
+  /**
+   * Reacts to end of method triggered from launched or process link. If there are no other processes spreading links performed for the start, remove launched token.
+   * 
+   * @param {ExistedGraph} launchedGraph
+   * @param {string} launchedLinkId
+   * @param {string} launchedToRemove
+   */
+  mayBeEndedLaunched(launchedLinkId, launchedToRemove) {
+    var launchedGraph = this._getGraph(launchedLinkId);
+    this.graphSpreading.spreadGraph.count({ process: launchedLinkId }, undefined, (error, count) => {
+      if (!count) {
+        launchedGraph.update({ id: launchedLinkId, launched: launchedToRemove }, { launched: { remove: launchedToRemove }}, (error, count) => {
+          if (error) throw error;
+          if (!count) {
+            if(launchedGraph.removed) {
+              launchedGraph.removed.update({ id: launchedLinkId, launched: launchedToRemove }, { launched: { remove: launchedToRemove }}, (error, count) => {
+                if (error) throw error;
+              });
+            }
+          }
+        });
+      }
+    });
+  }
+  
+  /**
+   * Reacts to insert a new path.
+   * 
+   * @param {PathGraph} pathGraph
+   * @param {PathLink} pathLink
+   * @param {string[]} pathLink.launched - ['spread']
+   */
+  insertedPathLink(pathGraph, pathLink) {
+    this.graphSpreading.spreadByPathLink(pathGraph, pathLink, { process: pathLink.id }, undefined, () => {
+      this.mayBeEndedLaunched(pathLink.id, 'spread');
+    });
+  }
+  
+  /**
+   * Reacts to update source or target in path. Then it launched two queues, unspread and spread. This method triggers the first step of the first unspread queue. After removal of unspread from launched from path, you need to start the second queue with method updatedLaunchedUnspreadPathLink.
+   * 
+   * @param {PathGraph} pathGraph
+   * @param {PathLink} pathLink
+   * @param {string[]} pathLink.launched - ['unspread', 'spread']
+   */
+  updatedSourceOrTargetPathLink(pathGraph, pathLink) {
+    this.graphSpreading.unspreadByPathId(pathLink.id, { process: pathLink.id }, undefined, () => {
+      this.mayBeEndedLaunched(pathLink.id, 'unspread');
+    });
+  }
+  
+  /**
+   * Reacts to update launched remove unspread, but spread still exists. This method triggers the first step of the second spread queue.
+   * 
+   * @param {PathGraph} pathGraph
+   * @param {PathLink} pathLink
+   * @param {string[]} pathLink.launched - ['spread']
+   */
+  updatedLaunchedUnspreadPathLink(pathGraph, pathLink) {
+    this.insertedPathLink(pathGraph, pathLink);
+  }
+   
+  /**
+   * Reacts to remove path. Similar to the method updatedSourceOrTargetPathLink, but the work is gone  with pathGraph.removed.
+   * 
+   * @param {PathGraph} pathGraph
+   * @param {PathLink} pathLink
+   * @param {string[]} pathLink.launched - ['unspread']
+   */
+  removedPathLink(pathGraph, pathLink) {
+    this.graphSpreading.unspreadByPathId(pathLink.id, { process: pathLink.id }, undefined, () => {
+      this.mayBeEndedLaunched(pathLink.id, 'unspread');
+    });
+  }
+  
+  /**
+   * Reacts to insert new spread link. Link can be inserted with field process as step in queue or with field launched as start of queue.
+   * 
+   * @param {SpreadLink} spreadLink
+   * @param {string[]} [pathLink.launched]
+   * @param {string[]} [pathLink.process]
+   */
+  insertedSpreadLink(spreadLink) {
+    var
+      context = {},
+      process = false
+    ;
+    if (spreadLink.process &amp;&amp; typeof(spreadLink.process[0]) == 'string') {
+       context.process = spreadLink.process[0];
+       process = true;
+    } else if (spreadLink.launched &amp;&amp; typeof(spreadLink.launched[0]) == 'string') {
+      context.process = spreadLink.id;
+    } else {
+      throw new Error('SpreadLink should have `launched` or `process` field.');
+    }
+    this.graphSpreading.spreadFromSpreadLink(spreadLink, context, undefined, () => {
+      if (process) {
+        this.graphSpreading.spreadGraph.update(spreadLink.id, { process: { remove: context.process }});
+      }
+      this.mayBeEndedLaunched(context.process, 'spread');
+    });
+  }
+  
+  /**
+   * Reacts to remove spread link.
+   * 
+   * @param {SpreadLink} spreadLink
+   */
+  removedSpreadLink(spreadLink) {
+    var
+      context = { process: {} },
+      process = false,
+      launched = false
+    ;
+    if (spreadLink.process &amp;&amp; typeof(spreadLink.process[0]) == 'string') {
+       context.process = spreadLink.process[0];
+       launched = process = context.process;
+    } else if (spreadLink.launched &amp;&amp; typeof(spreadLink.launched[0]) == 'string') {
+      context.process = spreadLink.id;
+      launched = spreadLink.id;
+    } else {
+      throw new Error('SpreadLink '+spreadLink.id+' should have `launched` or `process` field.');
+    }
+    this.graphSpreading.unspreadFromRemovedSpreadLinkByPrevId(spreadLink.id, context, undefined, () => {
+      if (process) {
+        this.graphSpreading.spreadGraph.removed.update(spreadLink.id, { process: { remove: context.process }});
+      }
+      this.mayBeEndedLaunched(launched, 'unspread');
+    });
+  }
+}
+
+export { QueueSpreading };</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Sep 10 2016 07:03:19 GMT+0000 (UTC) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

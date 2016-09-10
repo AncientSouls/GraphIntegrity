@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Home - Documentation</title>
+    <title>path.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,37 +28,77 @@
 
 <div id="main">
     
+    <h1 class="page-title">path.js</h1>
+    
 
     
 
 
 
     
-
-
-
-
-
-
-
-
-
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * This method allows you to use PathGraph class to its inheritance chain.
+ * Field launched is required!
+ * Manage field launched.
+ * 
+ * @param {Class} ParentClassGraph
+ * @return {Class} PathGraph
+ * @description `import { factoryPathGraph } from 'ancient-graph-spreading';`
+ */
+function factoryPathGraph(ParentClassGraph) {
+  class PathGraph extends ParentClassGraph {
     
+    /**
+     * Parent constrctor arguments taken in args array.
+     * 
+     * @param {Array} args - parent class graph arguments
+     * @param {string} fromField
+     * @param {string} toField
+     */
+    constructor(args, fromField, toField) {
+      super(...args);
+      this._fromField = fromField;
+      this._toField = toField;
+    }
+    
+    /**
+     * Parent insert with added launched field. You can override it field in modifier.
+     */
+    insert(modifier, callback, context) {
+      if (!modifier.launched) modifier.launched = ['spread'];
+      return super.insert(modifier, callback, context);
+    }
+    
+    /**
+     * Parent update, but if source or target changed, then to the launched field will be added values unspread and spread. You can override it field in modifier.
+     */
+    update(selector, modifier, callback, context) {
+      if (!modifier.hasOwnProperty('launched') &amp;&amp; (modifier.hasOwnProperty('source') || modifier.hasOwnProperty('target'))) {
+        modifier.launched = { add: ['unspread', 'spread'] };
+      }
+      return super.update(selector, modifier, callback, context);
+    }
+    
+    /**
+     * The method is strictly designed so that the class inherits from ExistedGraph.
+     * Adds to launched field unspread value.
+     */
+    remove(selector, callback, context) {
+      if (!context) var context = {};
+      if (!context.modifier) context.modifier = {};
+      context.modifier.launched = ['unspread'];
+      return super.remove(selector, callback, context);
+    }
+  }
+  
+  return PathGraph;
+};
 
-
-    <section class="readme">
-        <article><h1>AncientGraphSpreading</h1><p><a href="https://badge.fury.io/js/ancient-graph-spreading"><img src="https://badge.fury.io/js/ancient-graph-spreading.svg" alt="npm version"></a>
-<a href="https://gitter.im/AncientSouls/Lobby?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/Join%20Chat.svg" alt="Join the chat at https://gitter.im/AncientSouls/Lobby"></a></p>
-<p>Automatic maintenance spreading of graph according other graphs.</p>
-<h2>Install</h2><pre class="prettyprint source lang-bash"><code>npm install --save ancient-graph-spreading</code></pre><h2>Tests</h2><p>Tests can be started with comand <code>npm install ancient-graph-spreading &amp;&amp; cd ./node_modules/ancient-graph-spreading &amp;&amp; npm run compile &amp;&amp; npm test</code>. For more information lern <a href="https://github.com/AncientSouls/Graph/blob/master/src/tests/index.js">src/tests/index.js</a>.</p>
-<h2>License</h2><p>The MIT License (MIT)
-Copyright (c) 2016 Ivan S Glazunov <a href="&#109;&#97;&#105;&#x6c;&#x74;&#x6f;&#x3a;&#105;&#x76;&#x61;&#110;&#115;&#103;&#108;&#97;&#x7a;&#x75;&#x6e;&#x6f;&#x76;&#x40;&#103;&#109;&#97;&#x69;&#x6c;&#46;&#99;&#x6f;&#x6d;">&#105;&#x76;&#x61;&#110;&#115;&#103;&#108;&#97;&#x7a;&#x75;&#x6e;&#x6f;&#x76;&#x40;&#103;&#109;&#97;&#x69;&#x6c;&#46;&#99;&#x6f;&#x6d;</a></p>
-<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
-<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
-<p>THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p></article>
+export { factoryPathGraph };</code></pre>
+        </article>
     </section>
-
-
 
 
 

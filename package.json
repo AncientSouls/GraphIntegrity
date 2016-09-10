@@ -1,6 +1,6 @@
 {
   "name": "ancient-graph-spreading",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Automatic maintenance spreading of graph according other graphs.",
   "keywords": [
     "javascript",
@@ -31,7 +31,8 @@
     "test": "tests"
   },
   "dependencies": {
-    "ancient-graph": "^0.0.18",
+    "ancient-graph": "^0.0.27",
+    "ancient-graph-removed": "0.0.2",
     "async": "^2.0.1",
     "chai": "^3.5.0",
     "mocha": "^2.5.3"
@@ -45,9 +46,9 @@
     "source-map-support": "^0.4.2"
   },
   "scripts": {
-    "compile": "babel --presets es2015 -d ./ src/",
+    "compile": "babel --presets es2015 -d ./ src/ -s --minified",
     "postpublish": "git push",
     "test": "npm run compile && mocha tests/index.js --require source-map-support/register",
-    "jsdoc": "git submodule update --init --recursive && cd ./doc && git checkout gh-pages && cd ../ && npm i && rm -rf ./doc/*/ && find ./doc ! -name '.git' -type f -exec rm -rf {} + && jsdoc ./src/lib/*.js ./README.md -r -d ./doc -t ./node_modules/minami -c ./jsdoc.conf.json -u ./tutorials"
+    "jsdoc": "rm -rf ./doc && git submodule update --init --recursive && cd ./doc && git checkout gh-pages && cd ../ && npm i && rm -rf ./doc/*/ && find ./doc ! -name '.git' -type f -exec rm -rf {} + && jsdoc ./src/lib/*.js ./README.md -r -d ./doc -t ./node_modules/minami -c ./jsdoc.conf.json -u ./tutorials"
   }
 }

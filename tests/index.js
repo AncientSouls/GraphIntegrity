@@ -16,6 +16,10 @@ var _testQueue = require('./testQueue.js');
 
 var _testQueue2 = _interopRequireDefault(_testQueue);
 
+var _testSpreader = require('./testSpreader.js');
+
+var _testSpreader2 = _interopRequireDefault(_testSpreader);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -28,6 +32,9 @@ require('source-map-support').install();
 
 describe('AncientSouls/GraphSpreading', function () {
   function generateGraphSpreading() {
+
+    // Unique id between graphs
+
     var NamedGraph = function (_Graph) {
       _inherits(NamedGraph, _Graph);
 
@@ -50,11 +57,17 @@ describe('AncientSouls/GraphSpreading', function () {
       return NamedGraph;
     }(_object.Graph);
 
+    // Removed (Existed and NonExisted)
+
     var ExistedGraph = (0, _ancientGraphRemoved.factoryExistedGraph)(NamedGraph);
     var NonExistedGraph = (0, _ancientGraphRemoved.factoryNonExistedGraph)(NamedGraph);
 
+    // PathGraph
+
     var ExistedPathGraph = (0, _.factoryPathGraph)(ExistedGraph);
     var NonExistedPathGraph = NonExistedGraph;
+
+    // SpreadGraph
 
     var ExistedSpreadGraph = function () {
       var ExistedSpreadGraph = (0, _.factorySpreadGraph)(ExistedGraph);
@@ -95,12 +108,18 @@ describe('AncientSouls/GraphSpreading', function () {
     }();
     var NonExistedSpreadGraph = (0, _.factorySpreadGraph)(NonExistedGraph);
 
+    // Graphs instances
+
+    // pathGraph
+
     var pathGraph = new ExistedPathGraph([[], {
       id: 'id', source: 'source', target: 'target',
       removed: 'removed', launched: 'launched', process: 'process'
     }, 'path'], 'source', 'target');
 
     pathGraph.removed = new NonExistedPathGraph(pathGraph.collection, pathGraph.fields, pathGraph._name);
+
+    // spreadGraph
 
     var spreadGraph = new ExistedSpreadGraph([[], {
       id: 'id', source: 'source', target: 'target',
@@ -110,8 +129,12 @@ describe('AncientSouls/GraphSpreading', function () {
 
     spreadGraph.removed = new NonExistedSpreadGraph([spreadGraph.collection, spreadGraph.fields, spreadGraph._name], spreadGraph._fromField, spreadGraph._toField);
 
+    // GraphSpreading instance
+
     var graphSpreading = new _.GraphSpreading(spreadGraph);
     graphSpreading.addPathGraph(pathGraph);
+
+    // QueueSpreading id parser
 
     var QueueSpreading = function (_AncientQueueSpreadin) {
       _inherits(QueueSpreading, _AncientQueueSpreadin);
@@ -138,12 +161,163 @@ describe('AncientSouls/GraphSpreading', function () {
     return { pathGraph: pathGraph, spreadGraph: spreadGraph, graphSpreading: graphSpreading, queueSpreading: queueSpreading };
   };
 
-  describe('GraphSpreading', function () {
+  describe('GraphSpreading PathGraph SpreadGraph', function () {
     (0, _testSpreading2.default)(generateGraphSpreading, "abcdefghijklmnopqrstuvwxyz".split(""));
   });
 
-  describe('QueueSpreading', function () {
+  describe('QueueSpreading PathGraph SpreadGraph', function () {
     (0, _testQueue2.default)(generateGraphSpreading, "abcdefghijklmnopqrstuvwxyz".split(""));
+  });
+
+  describe('SpreaderGraph PathGraph SpreadGraph', function () {
+    (0, _testSpreader2.default)(function () {
+
+      // Unique id between graphs
+
+      var NamedGraph = function (_Graph2) {
+        _inherits(NamedGraph, _Graph2);
+
+        function NamedGraph(collection, fields, name) {
+          _classCallCheck(this, NamedGraph);
+
+          var _this5 = _possibleConstructorReturn(this, (NamedGraph.__proto__ || Object.getPrototypeOf(NamedGraph)).call(this, collection, fields));
+
+          _this5._name = name;
+          return _this5;
+        }
+
+        _createClass(NamedGraph, [{
+          key: '_idGenerator',
+          value: function _idGenerator(index, link) {
+            return this._name + '/' + index;
+          }
+        }]);
+
+        return NamedGraph;
+      }(_object.Graph);
+
+      // Removed (Existed and NonExisted)
+
+      var ExistedGraph = (0, _ancientGraphRemoved.factoryExistedGraph)(NamedGraph);
+      var NonExistedGraph = (0, _ancientGraphRemoved.factoryNonExistedGraph)(NamedGraph);
+
+      // PathGraph
+
+      var ExistedPathGraph = (0, _.factoryPathGraph)(ExistedGraph);
+      var NonExistedPathGraph = NonExistedGraph;
+
+      // SpreadGraph
+
+      var ExistedSpreadGraph = function () {
+        var ExistedSpreadGraph = (0, _.factorySpreadGraph)(ExistedGraph);
+
+        var CustomExistedSpreadGraph = function (_ExistedSpreadGraph2) {
+          _inherits(CustomExistedSpreadGraph, _ExistedSpreadGraph2);
+
+          function CustomExistedSpreadGraph() {
+            _classCallCheck(this, CustomExistedSpreadGraph);
+
+            return _possibleConstructorReturn(this, (CustomExistedSpreadGraph.__proto__ || Object.getPrototypeOf(CustomExistedSpreadGraph)).apply(this, arguments));
+          }
+
+          _createClass(CustomExistedSpreadGraph, [{
+            key: '_spreadingHandler',
+            value: function _spreadingHandler(prevSpreadLink, pathGraph, pathLink, newSpreadLink, context, callback) {
+              var _this7 = this;
+
+              // Spreader support for this SpreadGraph
+              if (prevSpreadLink && prevSpreadLink.spreader) {
+                newSpreadLink.spreader = prevSpreadLink.spreader;
+              }
+
+              if (!pathLink) {
+                callback(newSpreadLink);
+              } else {
+                pathGraph.fetch(pathLink.id, undefined, function (error, pathLinks) {
+                  _this7.fetch({
+                    source: newSpreadLink.source, target: newSpreadLink.target,
+                    prev: newSpreadLink.prev, path: newSpreadLink.path, root: newSpreadLink.root
+                  }, undefined, function (error, spreadLinks) {
+                    callback(!spreadLinks.length && pathLinks.length ? newSpreadLink : undefined);
+                  });
+                });
+              }
+            }
+          }]);
+
+          return CustomExistedSpreadGraph;
+        }(ExistedSpreadGraph);
+
+        return CustomExistedSpreadGraph;
+      }();
+      var NonExistedSpreadGraph = (0, _.factorySpreadGraph)(NonExistedGraph);
+
+      // SpreaderGraph
+
+      var ExistedSpreaderGraph = (0, _.factorySpreaderGraph)(ExistedGraph);
+      var NonExistedSpreaderGraph = NonExistedGraph;
+
+      // Graphs instances
+
+      // pathGraph
+
+      var pathGraph = new ExistedPathGraph([[], {
+        id: 'id', source: 'source', target: 'target',
+        removed: 'removed', launched: 'launched', process: 'process'
+      }, 'path'], 'source', 'target');
+
+      pathGraph.removed = new NonExistedPathGraph(pathGraph.collection, pathGraph.fields, pathGraph._name);
+
+      // spreadGraph
+
+      var spreadGraph = new ExistedSpreadGraph([[], {
+        id: 'id', source: 'source', target: 'target',
+        removed: 'removed', launched: 'launched', process: 'process', spreader: 'spreader',
+        prev: 'prev', path: 'path', root: 'root'
+      }, 'spread'], 'source', 'target');
+
+      spreadGraph.removed = new NonExistedSpreadGraph([spreadGraph.collection, spreadGraph.fields, spreadGraph._name], spreadGraph._fromField, spreadGraph._toField);
+
+      // spreaderGraph
+
+      var spreaderGraph = new ExistedSpreaderGraph([[], {
+        id: 'id', source: 'source', target: 'target',
+        removed: 'removed', launched: 'launched', process: 'process'
+      }, 'spreader'], 'source', 'target');
+
+      spreaderGraph.removed = new NonExistedSpreaderGraph(spreaderGraph.collection, spreaderGraph.fields, spreaderGraph._name);
+
+      // GraphSpreading instance
+
+      var graphSpreading = new _.GraphSpreading(spreadGraph);
+      graphSpreading.addPathGraph(pathGraph);
+
+      // QueueSpreading id parser
+
+      var QueueSpreading = function (_AncientQueueSpreadin2) {
+        _inherits(QueueSpreading, _AncientQueueSpreadin2);
+
+        function QueueSpreading() {
+          _classCallCheck(this, QueueSpreading);
+
+          return _possibleConstructorReturn(this, (QueueSpreading.__proto__ || Object.getPrototypeOf(QueueSpreading)).apply(this, arguments));
+        }
+
+        _createClass(QueueSpreading, [{
+          key: '_getGraph',
+          value: function _getGraph(id) {
+            var splited = id.split('/');
+            if (splited[0] == 'spread') return spreadGraph;else if (splited[0] == 'path') return pathGraph;else if (splited[0] == 'spreader') return spreaderGraph;else throw new Error('Graph is not founded');
+          }
+        }]);
+
+        return QueueSpreading;
+      }(_.QueueSpreading);
+
+      var queueSpreading = new QueueSpreading(graphSpreading);
+
+      return { pathGraph: pathGraph, spreadGraph: spreadGraph, spreaderGraph: spreaderGraph, graphSpreading: graphSpreading, queueSpreading: queueSpreading };
+    }, "abcdefghijklmnopqrstuvwxyz".split(""));
   });
 });
 //# sourceMappingURL=index.js.map

@@ -2,7 +2,7 @@ import { assert } from 'chai';
 import { factoryPathGraph, factorySpreadGraph, GraphSpreading, QueueSpreading } from '../';
 import lodash from 'lodash';
 
-export default function testExampleQueue(generageGraphSpreading, ids) {
+export default function testQueue(generageGraphSpreading, ids) {
   it('#insertedPathLink', function(done) {
     var { pathGraph, spreadGraph, graphSpreading, queueSpreading } = generageGraphSpreading();
     

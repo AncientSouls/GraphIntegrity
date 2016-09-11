@@ -1,26 +1,25 @@
 /**
- * This method allows you to use PathGraph class to its inheritance chain.
+ * This method allows you to use SpreaderGraph class to its inheritance chain.
  * Field launched is required!
  * Manage field launched.
+ * If using this graph, then in the spreadGraph field spreader is required.
  * 
  * @param {Class} ParentClassGraph
- * @return {Class} PathGraph
- * @description `import { factoryPathGraph } from 'ancient-graph-spreading';`
+ * @return {Class} SpreaderGraph
+ * @description `import { factorySpreaderGraph } from 'ancient-graph-spreading';`
  */
-function factoryPathGraph(ParentClassGraph) {
-  class PathGraph extends ParentClassGraph {
+function factorySpreaderGraph(ParentClassGraph) {
+  class SpreaderGraph extends ParentClassGraph {
     
     /**
-     * Parent constrctor arguments taken in args array.
-     * 
      * @param {Array} args - parent class graph arguments
-     * @param {string} fromField
-     * @param {string} toField
+     * @param {string} constantField
+     * @param {string} variableField
      */
-    constructor(args, fromField, toField) {
+    constructor(args, constantField, variableField) {
       super(...args);
-      this._fromField = fromField;
-      this._toField = toField;
+      this._constantField = constantField;
+      this._variableField = variableField;
     }
     
     /**
@@ -35,11 +34,10 @@ function factoryPathGraph(ParentClassGraph) {
      * Parent update, but if source or target changed, then to the launched field will be added values unspread and spread. You can override it field in modifier.
      */
     update(selector, modifier, callback, context) {
-      if (
-        !modifier.hasOwnProperty('launched') &&
-        (modifier.hasOwnProperty(this._fromField) || modifier.hasOwnProperty(this._toField))
-      ) {
-        modifier.launched = { add: ['unspread', 'spread'] };
+      if (!modifier.hasOwnProperty('launched')) {
+        if (modifier.hasOwnProperty(this._variableField) || modifier.hasOwnProperty(this._constantField)) {
+          modifier.launched = { add: ['unspread', 'spread'] };
+        }
       }
       return super.update(selector, modifier, callback, context);
     }
@@ -56,7 +54,7 @@ function factoryPathGraph(ParentClassGraph) {
     }
   }
   
-  return PathGraph;
+  return SpreaderGraph;
 };
 
-export { factoryPathGraph };
+export { factorySpreaderGraph };

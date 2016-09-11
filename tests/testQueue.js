@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = testExampleQueue;
+exports.default = testQueue;
 
 var _chai = require('chai');
 
@@ -15,7 +15,7 @@ var _lodash2 = _interopRequireDefault(_lodash);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function testExampleQueue(generageGraphSpreading, ids) {
+function testQueue(generageGraphSpreading, ids) {
   it('#insertedPathLink', function (done) {
     var _generageGraphSpreadi = generageGraphSpreading();
 

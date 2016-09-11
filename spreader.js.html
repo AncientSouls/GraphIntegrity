@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>spread.js - Documentation</title>
+    <title>spreader.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,7 +28,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">spread.js</h1>
+    <h1 class="page-title">spreader.js</h1>
     
 
     
@@ -39,16 +39,17 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * This method allows you to use SpreadGraph class to its inheritance chain.
- * Fields launched, process, prev, path and root is required!
- * Manage fields launched and process.
+ * This method allows you to use SpreaderGraph class to its inheritance chain.
+ * Field launched is required!
+ * Manage field launched.
+ * If using this graph, then in the spreadGraph field spreader is required.
  * 
  * @param {Class} ParentClassGraph
- * @return {Class} SpreadGraph
- * @description `import { factorySpreadGraph } from 'ancient-graph-spreading';`
+ * @return {Class} SpreaderGraph
+ * @description `import { factorySpreaderGraph } from 'ancient-graph-spreading';`
  */
-function factorySpreadGraph(ParentClassGraph) {
-  class SpreadGraph extends ParentClassGraph {
+function factorySpreaderGraph(ParentClassGraph) {
+  class SpreaderGraph extends ParentClassGraph {
     
     /**
      * @param {Array} args - parent class graph arguments
@@ -62,34 +63,23 @@ function factorySpreadGraph(ParentClassGraph) {
     }
     
     /**
-     * Default spreading handler. If spread specified link allowed, callback it link, else callback undefined.
-     * 
-     * @param {Object} [prevSpreadLink]
-     * @param {PathGraph} [pathGraph]
-     * @param {Object} [pathLink]
-     * @param {Object} newSpreadLink 
-     * @param {Object} [context]
-     * @param {SpreadGraph~_spreadingHandlerCallback} [callback]
+     * Parent insert with added launched field. You can override it field in modifier.
      */
-    _spreadingHandler(prevSpreadLink, pathGraph, pathLink, newSpreadLink, context, callback) {
-      callback(newSpreadLink);
+    insert(modifier, callback, context) {
+      if (!modifier.launched) modifier.launched = ['spread'];
+      return super.insert(modifier, callback, context);
     }
     
     /**
-     * Responce from _spreadingHandler method.
-     *
-     * @callback SpreadGraph~_spreadingHandlerCallback
-     * @param {Object} [newSpreadLink] 
+     * Parent update, but if source or target changed, then to the launched field will be added values unspread and spread. You can override it field in modifier.
      */
-    
-    /**
-     * Parent insert with parser of context.process.
-     */
-    insert(modifier, callback, context) {
-      if (context &amp;&amp; context.process) {
-        modifier.process = [context.process];
+    update(selector, modifier, callback, context) {
+      if (!modifier.hasOwnProperty('launched')) {
+        if (modifier.hasOwnProperty(this._variableField) || modifier.hasOwnProperty(this._constantField)) {
+          modifier.launched = { add: ['unspread', 'spread'] };
+        }
       }
-      return super.insert(modifier, callback, context);
+      return super.update(selector, modifier, callback, context);
     }
     
     /**
@@ -97,18 +87,17 @@ function factorySpreadGraph(ParentClassGraph) {
      * Adds to launched field unspread value.
      */
     remove(selector, callback, context) {
-      if (context &amp;&amp; context.process) {
-        if (!context.modifier) context.modifier = {};
-        context.modifier.process = { add: context.process };
-      }
+      if (!context) var context = {};
+      if (!context.modifier) context.modifier = {};
+      context.modifier.launched = ['unspread'];
       return super.remove(selector, callback, context);
     }
   }
   
-  return SpreadGraph;
+  return SpreaderGraph;
 };
 
-export { factorySpreadGraph };</code></pre>
+export { factorySpreaderGraph };</code></pre>
         </article>
     </section>
 

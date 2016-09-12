@@ -146,18 +146,12 @@ describe('AncientSouls/GraphSpreading', function() {
               newSpreadLink.spreader = prevSpreadLink.spreader;
             }
             
-            if (!pathLink) {
-              callback(newSpreadLink);
-            } else {
-              pathGraph.fetch(pathLink.id, undefined, (error, pathLinks) => {
-                this.fetch({
-                  source: newSpreadLink.source, target: newSpreadLink.target,
-                  prev: newSpreadLink.prev, path: newSpreadLink.path, root: newSpreadLink.root
-                }, undefined, (error, spreadLinks) => {
-                  callback(!spreadLinks.length&&pathLinks.length?newSpreadLink:undefined);
-                });
-              });
-            }
+            this.fetch({
+              source: newSpreadLink.source, target: newSpreadLink.target,
+              spreader: newSpreadLink.spreader
+            }, undefined, (error, spreadLinks) => {
+              callback((!spreadLinks.length)?newSpreadLink:undefined);
+            });
           }
         }
         return CustomExistedSpreadGraph;

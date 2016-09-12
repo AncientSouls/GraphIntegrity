@@ -138,7 +138,6 @@ function testQueue(generageGraphSpreading, ids) {
     spreadGraph.on('remove', function (oldLink, newLink) {
       queueSpreading.removedSpreadLink(oldLink);
     });
-    spreadGraph.on('update', function (oldLink, newLink) {});
     pathGraph.on('insert', function (oldLink, newLink) {
       queueSpreading.insertedPathLink(pathGraph, newLink);
     });

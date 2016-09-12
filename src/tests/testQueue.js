@@ -118,8 +118,6 @@ export default function testQueue(generageGraphSpreading, ids) {
     spreadGraph.on('remove', (oldLink, newLink) => {
       queueSpreading.removedSpreadLink(oldLink);
     });
-    spreadGraph.on('update', (oldLink, newLink) => {
-    });
     pathGraph.on('insert', (oldLink, newLink) => {
       queueSpreading.insertedPathLink(pathGraph, newLink);
     });

@@ -223,25 +223,18 @@ describe('AncientSouls/GraphSpreading', function () {
           _createClass(CustomExistedSpreadGraph, [{
             key: '_spreadingHandler',
             value: function _spreadingHandler(prevSpreadLink, pathGraph, pathLink, newSpreadLink, context, callback) {
-              var _this7 = this;
 
               // Spreader support for this SpreadGraph
               if (prevSpreadLink && prevSpreadLink.spreader) {
                 newSpreadLink.spreader = prevSpreadLink.spreader;
               }
 
-              if (!pathLink) {
-                callback(newSpreadLink);
-              } else {
-                pathGraph.fetch(pathLink.id, undefined, function (error, pathLinks) {
-                  _this7.fetch({
-                    source: newSpreadLink.source, target: newSpreadLink.target,
-                    prev: newSpreadLink.prev, path: newSpreadLink.path, root: newSpreadLink.root
-                  }, undefined, function (error, spreadLinks) {
-                    callback(!spreadLinks.length && pathLinks.length ? newSpreadLink : undefined);
-                  });
-                });
-              }
+              this.fetch({
+                source: newSpreadLink.source, target: newSpreadLink.target,
+                spreader: newSpreadLink.spreader
+              }, undefined, function (error, spreadLinks) {
+                callback(!spreadLinks.length ? newSpreadLink : undefined);
+              });
             }
           }]);
 

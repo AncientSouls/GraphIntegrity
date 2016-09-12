@@ -142,7 +142,6 @@ function testSpreader(generageGraphSpreading, ids) {
     spreaderGraph.on('insert', function (oldLink, newLink) {
       queueSpreading.insertedSpreaderLink(spreaderGraph, newLink);
     });
-
     spreaderGraph.on('update', function (oldLink, newLink) {
       _chai.assert.lengthOf(newLink.launched, 0);
       spreaderGraph.remove(newLink.id);

@@ -117,7 +117,6 @@ export default function testSpreader(generageGraphSpreading, ids) {
     spreaderGraph.on('insert', (oldLink, newLink) => {
       queueSpreading.insertedSpreaderLink(spreaderGraph, newLink);
     });
-    
     spreaderGraph.on('update', (oldLink, newLink) => {
       assert.lengthOf(newLink.launched, 0);
       spreaderGraph.remove(newLink.id);

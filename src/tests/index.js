@@ -1,5 +1,7 @@
 require('source-map-support').install();
 
+import { assert } from 'chai';
+
 import { Graph } from 'ancient-graph/lib/adapters/object.js';
 
 import { factoryPathGraph, factorySpreadGraph, factorySpreaderGraph, GraphSpreading, QueueSpreading as AncientQueueSpreading } from '../';
@@ -9,19 +11,19 @@ import testGraphSpreading from './testSpreading.js';
 import testQueue from './testQueue.js';
 import testSpreader from './testSpreader.js';
 
-// Unique id between graphs
-
-class NamedGraph extends Graph {
-  constructor(collection, fields, config) {
-    super(...arguments);
-    
-    if (config.name) this.name = config.name;
-  }
-  _idGenerator(index, link) { return this.name+'/'+index; }
-}
-
 describe('AncientSouls/GraphSpreading', function() {
   function generateGraphSpreading() {
+    
+    // Unique id between graphs
+
+    class NamedGraph extends Graph {
+      constructor(collection, fields, config) {
+        super(...arguments);
+        
+        if (config.name) this.name = config.name;
+      }
+      _idGenerator(index, link) { return this.name+'/'+index; }
+    }
     
     // Removed (Existed and NonExisted)
     
@@ -64,7 +66,7 @@ describe('AncientSouls/GraphSpreading', function() {
     var pathGraph = new ExistedPathGraph([], {
         id: 'id', source: 'source', target: 'target',
         removed: 'removed', launched: 'launched', process: 'process'
-    }, { name: 'path', fromField: 'source', toField: 'target' });
+    }, { name: 'path', fromFields: ['source'], toFields: ['target'] });
     
     pathGraph.removed = new NonExistedPathGraph(
       pathGraph.collection, pathGraph.fields, pathGraph.config
@@ -114,6 +116,17 @@ describe('AncientSouls/GraphSpreading', function() {
   describe('SpreaderGraph PathGraph SpreadGraph', function() {
     testSpreader(function() {
       
+      // Unique id between graphs
+  
+      class NamedGraph extends Graph {
+        constructor(collection, fields, config) {
+          super(...arguments);
+          
+          if (config.name) this.name = config.name;
+        }
+        _idGenerator(index, link) { return this.name+'/'+index; }
+      }
+      
       // Removed (Existed and NonExisted)
       
       var ExistedGraph = factoryExistedGraph(NamedGraph);
@@ -160,7 +173,7 @@ describe('AncientSouls/GraphSpreading', function() {
       var pathGraph = new ExistedPathGraph([], {
           id: 'id', source: 'source', target: 'target',
           removed: 'removed', launched: 'launched', process: 'process'
-      }, { name: 'path', fromField: 'source', toField: 'target' });
+      }, { name: 'path', fromFields: ['source'], toFields: ['target'] });
       
       pathGraph.removed = new NonExistedPathGraph(
         pathGraph.collection, pathGraph.fields, pathGraph.config

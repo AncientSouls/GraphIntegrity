@@ -24,6 +24,33 @@ class GraphSpreading {
   }
   
   /**
+   * Spread by pathLink and specified fromField with available spreadLinks.
+   * 
+   * @oaram {string} fromField
+   * @param {PathGraph} pathGraph
+   * @param {PathLink} pathLink
+   * @param {Object} [context]
+   * @param {GraphSpreading~spreadFromSpreadLinkByPathLinkCallback} [handler]
+   * @param {GraphSpreading~spreadByPathLinkCallback} [callback]
+   */
+  _spreadByPathLink(fromField, pathGraph, pathLink, context, handler, callback) {
+    this.spreadGraph.fetch({
+      [this.spreadGraph.variableField]: pathLink[fromField]
+    }, undefined, (error, spreadLinks) => {
+      if (spreadLinks.length) {
+        var queue = async.queue((spreadLink, next) => {
+          this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, handler, next);
+        });
+        queue.push(spreadLinks, (error) => {
+          if (callback) callback();
+        });
+      } else {
+        if (callback) callback();
+      }
+    });
+  }
+  
+  /**
    * Spread by pathLink with available spreadLinks.
    * 
    * @param {PathGraph} pathGraph
@@ -33,23 +60,9 @@ class GraphSpreading {
    * @param {GraphSpreading~spreadByPathLinkCallback} [callback]
    */
   spreadByPathLink(pathGraph, pathLink, context, handler, callback) {
-    this.spreadGraph.fetch({
-      [this.spreadGraph.variableField]: pathLink[pathGraph.fromField]
-    }, undefined, (error, spreadLinks) => {
-      if (spreadLinks.length) {
-        var queue = async.queue((spreadLink, next) => {
-          this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, (error, id, spreadLink, pathGraph, pathLink) => {
-            if (handler) handler(error, id, spreadLink, pathGraph, pathLink);
-            next();
-          });
-        });
-        queue.push(spreadLinks, (error) => {
-          if (callback) callback();
-        });
-      } else {
-        if (callback) callback();
-      }
-    });
+    async.each(pathGraph.fromFields, (fromField, next) => {
+      this._spreadByPathLink(fromField, pathGraph, pathLink, context, handler, next);
+    }, callback);
   }
   
   /**
@@ -92,6 +105,27 @@ class GraphSpreading {
   }
   
   /**
+   * Spread by all available paths in pathGraph from spreadLink and specified fromField.
+   * 
+   * @param {string} fromField
+   * @param {SpreadLink} spreadLink
+   * @param {PathGraph} pathGraph
+   * @param {GraphSpreading~spreadFromSpreadLinkByPathGraphHandler} [handler]
+   * @param {GraphSpreading~spreadFromSpreadLinkByPathGraphCallback} [callback]
+   */
+  _spreadFromSpreadLinkByPathGraph(fromField, spreadLink, pathGraph, context, handler, callback) {
+    pathGraph.fetch({
+      [fromField]: spreadLink[this.spreadGraph.variableField]
+    }, undefined, (error, pathLinks) => {
+      var queue = async.queue((pathLink, callback) => {
+        this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, handler, callback);
+      });
+      queue.drain = () => { if (callback) callback(); }
+      queue.push(pathLinks);
+    });
+  }
+  
+  /**
    * Spread by all available paths in pathGraph from spreadLink.
    * 
    * @param {SpreadLink} spreadLink
@@ -100,18 +134,9 @@ class GraphSpreading {
    * @param {GraphSpreading~spreadFromSpreadLinkByPathGraphCallback} [callback]
    */
   spreadFromSpreadLinkByPathGraph(spreadLink, pathGraph, context, handler, callback) {
-    pathGraph.fetch({
-      [pathGraph.fromField]: spreadLink[this.spreadGraph.variableField]
-    }, undefined, (error, pathLinks) => {
-      var queue = async.queue((pathLink, callback) => {
-        this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, (error, id) => {
-          if (handler) handler(error, id, spreadLink, pathGraph, pathLink);
-          callback();
-        });
-      });
-      queue.drain = () => { if (callback) callback(); }
-      queue.push(pathLinks);
-    });
+    async.each(pathGraph.fromFields, (fromField, next) => {
+      this._spreadFromSpreadLinkByPathGraph(fromField, spreadLink, pathGraph, context, handler, next);
+    }, callback);
   }
   
   /**
@@ -132,7 +157,7 @@ class GraphSpreading {
    */
   
   /**
-   * Spread by pathLink in pathGraph from spreadLink.
+   * Spread by pathLink and specified toField in pathGraph from spreadLink.
    * 
    * @param {SpreadLink} spreadLink
    * @param {PathGraph} pathGraph
@@ -140,10 +165,10 @@ class GraphSpreading {
    * @param {Object} [context]
    * @param {GraphSpreading~spreadFromSpreadLinkByPathLinkCallback} [callback]
    */
-  spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, callback) {
+  _spreadFromSpreadLinkByPathLink(toField, spreadLink, pathGraph, pathLink, context, callback) {
     this.spreadGraph._spreadingHandler(spreadLink, pathGraph, pathLink, {
       [this.spreadGraph.constantField]: spreadLink[this.spreadGraph.constantField],
-      [this.spreadGraph.variableField]: pathLink[pathGraph.toField],
+      [this.spreadGraph.variableField]: pathLink[toField],
       prev: spreadLink.id,
       path: pathLink.id,
       root: spreadLink.root?spreadLink.root:spreadLink.id
@@ -159,7 +184,26 @@ class GraphSpreading {
   }
   
   /**
-   * Optional callback. If present, called with an error object as the first argument and, if no error, the unique id of inserted spread link as the second.
+   * Spread by pathLink in pathGraph from spreadLink.
+   * 
+   * @param {SpreadLink} spreadLink
+   * @param {PathGraph} pathGraph
+   * @param {PathLink} pathLink
+   * @param {Object} [context]
+   * @param {GraphSpreading~spreadFromSpreadLinkByPathLinkHandler} [handler]
+   * @param {GraphSpreading~spreadFromSpreadLinkByPathLinkCallback} [callback]
+   */
+  spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, handler, callback) {
+    async.each(pathGraph.toFields, (toField, next) => {
+      this._spreadFromSpreadLinkByPathLink(toField, spreadLink, pathGraph, pathLink, context, (error, id, prev, pathGraph, pathLink) => {
+        if (handler) handler(error, id, prev, pathGraph, pathLink);
+        next();
+      });
+    }, callback);
+  }
+  
+  /**
+   * Optional handler.
    *
    * @callback GraphSpreading~spreadFromSpreadLinkByPathLinkCallback
    * @param {Error} [error]
@@ -167,6 +211,12 @@ class GraphSpreading {
    * @param {SpreadLink} [prevSpreadLink]
    * @param {PathGraph} [pathGraph]
    * @param {PathLink} [pathLink]
+   */
+  
+  /**
+   * Optional callback. If present, called with an error object as the first argument and, if no error, the unique id of inserted spread link as the second.
+   *
+   * @callback GraphSpreading~spreadFromSpreadLinkByPathLinkCallback
    */
   
   /**
@@ -268,7 +318,7 @@ class GraphSpreading {
    * @param {GraphSpreading~unspreadToCallback} [callback]
    */
   unspread(id, context, handler, callback) {
-     this.spreadGraph.fetch({ [this.variableField]: id }, undefined, (error, spreadLinks) => {
+     this.spreadGraph.fetch({ [this.spreadGraph.variableField]: id }, undefined, (error, spreadLinks) => {
        if (error) {
          if (callback) callback(error);
        } else {
@@ -314,7 +364,7 @@ class GraphSpreading {
   spreadTo(id, context, handler, callback) {
     var queue = async.queue((pathGraph, nextPathGraph) => {
       pathGraph.fetch({
-        [pathGraph.toField]: id
+        [pathGraph.toFields[0]]: id
       }, undefined, (error, pathLinks) => {
         async.each(pathLinks, (pathLink, nextPathLink) => {
           this.spreadByPathLink(pathGraph, pathLink, context, handler, nextPathLink);

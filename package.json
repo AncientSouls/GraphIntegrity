@@ -31,7 +31,7 @@
     "test": "tests"
   },
   "dependencies": {
-    "ancient-graph": "^0.0.28",
+    "ancient-graph": "^0.0.29",
     "ancient-graph-removed": "0.0.2",
     "async": "^2.0.1",
     "chai": "^3.5.0",

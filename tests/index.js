@@ -2,6 +2,8 @@
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _chai = require('chai');
+
 var _object = require('ancient-graph/lib/adapters/object.js');
 
 var _ = require('../');
@@ -30,32 +32,32 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 require('source-map-support').install();
 
-// Unique id between graphs
-
-var NamedGraph = function (_Graph) {
-  _inherits(NamedGraph, _Graph);
-
-  function NamedGraph(collection, fields, config) {
-    _classCallCheck(this, NamedGraph);
-
-    var _this = _possibleConstructorReturn(this, (NamedGraph.__proto__ || Object.getPrototypeOf(NamedGraph)).apply(this, arguments));
-
-    if (config.name) _this.name = config.name;
-    return _this;
-  }
-
-  _createClass(NamedGraph, [{
-    key: '_idGenerator',
-    value: function _idGenerator(index, link) {
-      return this.name + '/' + index;
-    }
-  }]);
-
-  return NamedGraph;
-}(_object.Graph);
-
 describe('AncientSouls/GraphSpreading', function () {
   function generateGraphSpreading() {
+
+    // Unique id between graphs
+
+    var NamedGraph = function (_Graph) {
+      _inherits(NamedGraph, _Graph);
+
+      function NamedGraph(collection, fields, config) {
+        _classCallCheck(this, NamedGraph);
+
+        var _this = _possibleConstructorReturn(this, (NamedGraph.__proto__ || Object.getPrototypeOf(NamedGraph)).apply(this, arguments));
+
+        if (config.name) _this.name = config.name;
+        return _this;
+      }
+
+      _createClass(NamedGraph, [{
+        key: '_idGenerator',
+        value: function _idGenerator(index, link) {
+          return this.name + '/' + index;
+        }
+      }]);
+
+      return NamedGraph;
+    }(_object.Graph);
 
     // Removed (Existed and NonExisted)
 
@@ -115,7 +117,7 @@ describe('AncientSouls/GraphSpreading', function () {
     var pathGraph = new ExistedPathGraph([], {
       id: 'id', source: 'source', target: 'target',
       removed: 'removed', launched: 'launched', process: 'process'
-    }, { name: 'path', fromField: 'source', toField: 'target' });
+    }, { name: 'path', fromFields: ['source'], toFields: ['target'] });
 
     pathGraph.removed = new NonExistedPathGraph(pathGraph.collection, pathGraph.fields, pathGraph.config);
 
@@ -171,6 +173,30 @@ describe('AncientSouls/GraphSpreading', function () {
 
   describe('SpreaderGraph PathGraph SpreadGraph', function () {
     (0, _testSpreader2.default)(function () {
+
+      // Unique id between graphs
+
+      var NamedGraph = function (_Graph2) {
+        _inherits(NamedGraph, _Graph2);
+
+        function NamedGraph(collection, fields, config) {
+          _classCallCheck(this, NamedGraph);
+
+          var _this5 = _possibleConstructorReturn(this, (NamedGraph.__proto__ || Object.getPrototypeOf(NamedGraph)).apply(this, arguments));
+
+          if (config.name) _this5.name = config.name;
+          return _this5;
+        }
+
+        _createClass(NamedGraph, [{
+          key: '_idGenerator',
+          value: function _idGenerator(index, link) {
+            return this.name + '/' + index;
+          }
+        }]);
+
+        return NamedGraph;
+      }(_object.Graph);
 
       // Removed (Existed and NonExisted)
 
@@ -233,7 +259,7 @@ describe('AncientSouls/GraphSpreading', function () {
       var pathGraph = new ExistedPathGraph([], {
         id: 'id', source: 'source', target: 'target',
         removed: 'removed', launched: 'launched', process: 'process'
-      }, { name: 'path', fromField: 'source', toField: 'target' });
+      }, { name: 'path', fromFields: ['source'], toFields: ['target'] });
 
       pathGraph.removed = new NonExistedPathGraph(pathGraph.collection, pathGraph.fields, pathGraph.config);
 

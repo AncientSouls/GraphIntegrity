@@ -183,4 +183,35 @@ export default function testGraphSpreading(generateGraphSpreading, ids) {
       });
     });
   });
+  
+  it('#spreadTo #unspread', function(done) {
+    var { pathGraph, spreadGraph, graphSpreading } = generateGraphSpreading();
+    pathGraph.insert({ source: ids[0], target: ids[3] }, (error, pathLinkId0) => {
+      pathGraph.insert({ source: ids[1], target: ids[3] }, (error, pathLinkId1) => {
+        pathGraph.insert({ source: ids[2], target: ids[3] }, (error, pathLinkId2) => {
+          spreadGraph.insert({ source: ids[4], target: ids[0] }, (error, spreadLinkId0) => {
+            spreadGraph.insert({ source: ids[5], target: ids[1] }, (error, spreadLinkId1) => {
+              spreadGraph.insert({ source: ids[6], target: ids[2] }, (error, spreadLinkId2) => {
+                graphSpreading.spreadTo(ids[3], undefined, undefined, () => {
+                  spreadGraph.fetch({ target: ids[3] }, undefined, (error, spreadLinks) => {
+                    assert.ifError(error);
+                    assert.lengthOf(spreadLinks, 3);
+                    
+                    graphSpreading.unspread(ids[3], undefined, undefined, () => {
+                      spreadGraph.fetch({ target: ids[3] }, undefined, (error, spreadLinks) => {
+                        assert.ifError(error);
+                        assert.lengthOf(spreadLinks, 0);
+                        
+                        done();
+                      });
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 };

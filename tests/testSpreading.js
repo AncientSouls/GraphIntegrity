@@ -190,5 +190,41 @@ function testGraphSpreading(generateGraphSpreading, ids) {
       });
     });
   });
+
+  it('#spreadTo #unspread', function (done) {
+    var _generateGraphSpreadi4 = generateGraphSpreading();
+
+    var pathGraph = _generateGraphSpreadi4.pathGraph;
+    var spreadGraph = _generateGraphSpreadi4.spreadGraph;
+    var graphSpreading = _generateGraphSpreadi4.graphSpreading;
+
+    pathGraph.insert({ source: ids[0], target: ids[3] }, function (error, pathLinkId0) {
+      pathGraph.insert({ source: ids[1], target: ids[3] }, function (error, pathLinkId1) {
+        pathGraph.insert({ source: ids[2], target: ids[3] }, function (error, pathLinkId2) {
+          spreadGraph.insert({ source: ids[4], target: ids[0] }, function (error, spreadLinkId0) {
+            spreadGraph.insert({ source: ids[5], target: ids[1] }, function (error, spreadLinkId1) {
+              spreadGraph.insert({ source: ids[6], target: ids[2] }, function (error, spreadLinkId2) {
+                graphSpreading.spreadTo(ids[3], undefined, undefined, function () {
+                  spreadGraph.fetch({ target: ids[3] }, undefined, function (error, spreadLinks) {
+                    _chai.assert.ifError(error);
+                    _chai.assert.lengthOf(spreadLinks, 3);
+
+                    graphSpreading.unspread(ids[3], undefined, undefined, function () {
+                      spreadGraph.fetch({ target: ids[3] }, undefined, function (error, spreadLinks) {
+                        _chai.assert.ifError(error);
+                        _chai.assert.lengthOf(spreadLinks, 0);
+
+                        done();
+                      });
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 };
 //# sourceMappingURL=testSpreading.js.map

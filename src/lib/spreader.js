@@ -12,14 +12,20 @@ function factorySpreaderGraph(ParentClassGraph) {
   class SpreaderGraph extends ParentClassGraph {
     
     /**
-     * @param {Array} args - parent class graph arguments
-     * @param {string} constantField
-     * @param {string} variableField
+     * @param {} collection - A pointer to the collection dannymineobhodimye daapteru to work with the graph. This may be a connection to the SQL database and table name, for example, or a collection of Mongo. 
+     * @param {Object} fields - Comparison of the data in the collection of data in the graph. It is necessary for the adapter.
+     * @param {Object} config - Additional config.
+     * @param {String} config.constantField - Constant field in graph
+     * @param {String} config.variableField - Spreadable field in graph
      */
-    constructor(args, constantField, variableField) {
-      super(...args);
-      this._constantField = constantField;
-      this._variableField = variableField;
+    constructor(collection, selector, config) {
+      super(...arguments);
+      
+      if (config.constantField) this.constantField = config.constantField;
+      else throw new Error('config.constantField is not defined');
+      
+      if (config.variableField) this.variableField = config.variableField;
+      else throw new Error('config.variableField is not defined');
     }
     
     /**
@@ -35,7 +41,7 @@ function factorySpreaderGraph(ParentClassGraph) {
      */
     update(selector, modifier, callback, context) {
       if (!modifier.hasOwnProperty('launched')) {
-        if (modifier.hasOwnProperty(this._variableField) || modifier.hasOwnProperty(this._constantField)) {
+        if (modifier.hasOwnProperty(this.variableField) || modifier.hasOwnProperty(this.constantField)) {
           modifier.launched = { add: ['unspread', 'spread'] };
         }
       }

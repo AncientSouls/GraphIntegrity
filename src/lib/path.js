@@ -13,14 +13,20 @@ function factoryPathGraph(ParentClassGraph) {
     /**
      * Parent constrctor arguments taken in args array.
      * 
-     * @param {Array} args - parent class graph arguments
-     * @param {string} fromField
-     * @param {string} toField
+     * @param {} collection - A pointer to the collection dannymineobhodimye daapteru to work with the graph. This may be a connection to the SQL database and table name, for example, or a collection of Mongo. 
+     * @param {Object} fields - Comparison of the data in the collection of data in the graph. It is necessary for the adapter.
+     * @param {Object} config - Additional config.
+     * @param {String} config.fromField - Start direction in path link
+     * @param {String} config.toField - End direction in path link
      */
-    constructor(args, fromField, toField) {
-      super(...args);
-      this._fromField = fromField;
-      this._toField = toField;
+    constructor(collection, selector, config) {
+      super(...arguments);
+      
+      if (config.fromField) this.fromField = config.fromField;
+      else throw new Error('config.fromField is not defined');
+      
+      if (config.toField) this.toField = config.toField;
+      else throw new Error('config.toField is not defined');
     }
     
     /**
@@ -37,7 +43,7 @@ function factoryPathGraph(ParentClassGraph) {
     update(selector, modifier, callback, context) {
       if (
         !modifier.hasOwnProperty('launched') &&
-        (modifier.hasOwnProperty(this._fromField) || modifier.hasOwnProperty(this._toField))
+        (modifier.hasOwnProperty(this.fromField) || modifier.hasOwnProperty(this.toField))
       ) {
         modifier.launched = { add: ['unspread', 'spread'] };
       }

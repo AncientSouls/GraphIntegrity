@@ -34,7 +34,7 @@ class GraphSpreading {
    */
   spreadByPathLink(pathGraph, pathLink, context, handler, callback) {
     this.spreadGraph.fetch({
-      [this.spreadGraph._variableField]: pathLink[pathGraph._fromField]
+      [this.spreadGraph.variableField]: pathLink[pathGraph.fromField]
     }, undefined, (error, spreadLinks) => {
       if (spreadLinks.length) {
         var queue = async.queue((spreadLink, next) => {
@@ -101,7 +101,7 @@ class GraphSpreading {
    */
   spreadFromSpreadLinkByPathGraph(spreadLink, pathGraph, context, handler, callback) {
     pathGraph.fetch({
-      [pathGraph._fromField]: spreadLink[this.spreadGraph._variableField]
+      [pathGraph.fromField]: spreadLink[this.spreadGraph.variableField]
     }, undefined, (error, pathLinks) => {
       var queue = async.queue((pathLink, callback) => {
         this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, (error, id) => {
@@ -142,8 +142,8 @@ class GraphSpreading {
    */
   spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, callback) {
     this.spreadGraph._spreadingHandler(spreadLink, pathGraph, pathLink, {
-      [this.spreadGraph._constantField]: spreadLink[this.spreadGraph._constantField],
-      [this.spreadGraph._variableField]: pathLink[pathGraph._toField],
+      [this.spreadGraph.constantField]: spreadLink[this.spreadGraph.constantField],
+      [this.spreadGraph.variableField]: pathLink[pathGraph.toField],
       prev: spreadLink.id,
       path: pathLink.id,
       root: spreadLink.root?spreadLink.root:spreadLink.id
@@ -268,7 +268,7 @@ class GraphSpreading {
    * @param {GraphSpreading~unspreadToCallback} [callback]
    */
   unspread(id, context, handler, callback) {
-     this.spreadGraph.fetch({ [this._variableField]: id }, undefined, (error, spreadLinks) => {
+     this.spreadGraph.fetch({ [this.variableField]: id }, undefined, (error, spreadLinks) => {
        if (error) {
          if (callback) callback(error);
        } else {
@@ -314,7 +314,7 @@ class GraphSpreading {
   spreadTo(id, context, handler, callback) {
     var queue = async.queue((pathGraph, nextPathGraph) => {
       pathGraph.fetch({
-        [pathGraph._toField]: id
+        [pathGraph.toField]: id
       }, undefined, (error, pathLinks) => {
         async.each(pathLinks, (pathLink, nextPathLink) => {
           this.spreadByPathLink(pathGraph, pathLink, context, handler, nextPathLink);

@@ -165,8 +165,8 @@ class QueueSpreading {
    */
   insertedSpreaderLink(spreaderGraph, spreaderLink) {
     this.graphSpreading.spreadNewSpreadLink({
-      [this.graphSpreading.spreadGraph._constantField]: spreaderLink[spreaderGraph._constantField],
-      [this.graphSpreading.spreadGraph._variableField]: spreaderLink[spreaderGraph._variableField],
+      [this.graphSpreading.spreadGraph.constantField]: spreaderLink[spreaderGraph.constantField],
+      [this.graphSpreading.spreadGraph.variableField]: spreaderLink[spreaderGraph.variableField],
       spreader: spreaderLink.id
     }, { process: spreaderLink.id }, () => {
       this.mayBeEndedLaunched(spreaderLink.id, 'spread');

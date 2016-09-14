@@ -12,7 +12,7 @@ npm install --save ancient-graph-spreading
 
 ## Tests
 
-Tests can be started with comand `npm install ancient-graph-spreading && cd ./node_modules/ancient-graph-spreading && npm run compile && npm test`. For more information lern [src/tests/index.js](https://github.com/AncientSouls/Graph/blob/master/src/tests/index.js).
+Tests can be started with comand `npm install ancient-graph-spreading && cd ./node_modules/ancient-graph-spreading && npm test`. For more information lern [src/tests/index.js](https://github.com/AncientSouls/Graph/blob/master/src/tests/index.js).
 
 ## License
 

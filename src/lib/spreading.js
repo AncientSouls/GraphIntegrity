@@ -41,9 +41,8 @@ class GraphSpreading {
         var queue = async.queue((spreadLink, next) => {
           this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, handler, next);
         });
-        queue.push(spreadLinks, (error) => {
-          if (callback) callback();
-        });
+        if (callback) queue.drain = () => { callback(); };
+        queue.push(spreadLinks);
       } else {
         if (callback) callback();
       }
@@ -373,7 +372,7 @@ class GraphSpreading {
         });
       });
     });
-    queue.drain = () => { if (callback) callback(); }
+    if (callback) queue.drain = () => { callback(); }
     queue.push(this.pathGraphs);
   }
   

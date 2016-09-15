@@ -182,7 +182,7 @@ class QueueSpreading {
    */
   updatedSourceOrTargetSpreaderLink(spreaderGraph, spreaderLink) {
     this.graphSpreading.spreadGraph.remove({
-      spreading: spreaderLink.id
+      spreader: spreaderLink.id
     }, (error, count) => {
       this.mayBeEndedLaunched(spreaderLink.id, 'unspread');
     }, { modifier: { process: { add: spreaderLink.id }}});
@@ -208,7 +208,7 @@ class QueueSpreading {
    */
   removedSpreaderLink(spreaderGraph, spreaderLink) {
     this.graphSpreading.spreadGraph.remove({
-      spreading: spreaderLink.id
+      spreader: spreaderLink.id
     }, (error, count) => {
       this.mayBeEndedLaunched(spreaderLink.id, 'unspread');
     }, { modifier: { process: { add: spreaderLink.id }}});

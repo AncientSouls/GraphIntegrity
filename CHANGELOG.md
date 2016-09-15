@@ -1,4 +1,4 @@
-#### 0.0.4 (2016-9-15)
+#### 0.0.5 (2016-9-15)
 
 ##### Documentation Changes
 
@@ -13,6 +13,7 @@
 
 ##### Bug Fixes
 
+* **async:** Move callback from push to drain ([9385fa0a](https://github.com/AncientSouls/GraphSpreading/commit/9385fa0a9e9554c578fd5d9daa1844e8b6008ddb))
 * **spreading:** Wrong field name ([befd9659](https://github.com/AncientSouls/GraphSpreading/commit/befd9659d8779040c7bf95b23f18b043b63cd173))
 * **package:** Not need to compile after install ([fc4c20f0](https://github.com/AncientSouls/GraphSpreading/commit/fc4c20f0cae3604ed305c0a5bdc511b420645d04))
 * **readme:** npm run compile already in npm test ([b935e5c5](https://github.com/AncientSouls/GraphSpreading/commit/b935e5c5a8af9c535c11908cb0fb17bdcd17785e))

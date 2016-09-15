@@ -1,4 +1,8 @@
-#### 0.0.3 (2016-9-13)
+#### 0.0.4 (2016-9-15)
+
+##### Documentation Changes
+
+* **readme:** Compile before testing ([f6af1257](https://github.com/AncientSouls/GraphSpreading/commit/f6af1257d59115cc865d9ede8a37bf2dcdded055))
 
 ##### New Features
 
@@ -9,6 +13,9 @@
 
 ##### Bug Fixes
 
+* **spreading:** Wrong field name ([befd9659](https://github.com/AncientSouls/GraphSpreading/commit/befd9659d8779040c7bf95b23f18b043b63cd173))
+* **package:** Not need to compile after install ([fc4c20f0](https://github.com/AncientSouls/GraphSpreading/commit/fc4c20f0cae3604ed305c0a5bdc511b420645d04))
+* **readme:** npm run compile already in npm test ([b935e5c5](https://github.com/AncientSouls/GraphSpreading/commit/b935e5c5a8af9c535c11908cb0fb17bdcd17785e))
 * **spreader:** Spread links handler without path fetching. ([7c024654](https://github.com/AncientSouls/GraphSpreading/commit/7c0246543aafdfcc45175aa62dad4032ea4e561f))
 * **ignore:** src/lib/tests ([81745402](https://github.com/AncientSouls/GraphSpreading/commit/8174540215e2d06c1fd9512f0bffb2e697f9e677))
 

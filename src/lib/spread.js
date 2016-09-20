@@ -79,7 +79,7 @@ function factorySpreadGraph(ParentClassGraph) {
     
     /**
      * The method is strictly designed so that the class inherits from ExistedGraph.
-     * Adds to launched field unspread value.
+     * Adds to process field custom value from context.
      */
     remove(selector, callback, context) {
       if (context && context.process) {

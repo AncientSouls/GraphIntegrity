@@ -41,9 +41,7 @@ function factorySpreaderGraph(ParentClassGraph) {
      */
     update(selector, modifier, callback, context) {
       if (!modifier.hasOwnProperty('launched')) {
-        if (modifier.hasOwnProperty(this.variableField) || modifier.hasOwnProperty(this.constantField)) {
-          modifier.launched = { add: ['unspread', 'spread'] };
-        }
+        modifier.launched = { add: ['unspread', 'spread'] };
       }
       return super.update(selector, modifier, callback, context);
     }

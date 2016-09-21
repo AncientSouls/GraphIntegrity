@@ -68,8 +68,7 @@ function factoryPathGraph(ParentClassGraph) {
      */
     update(selector, modifier, callback, context) {
       if (
-        !modifier.hasOwnProperty('launched') &&
-        (modifier.hasOwnProperty('source') || modifier.hasOwnProperty('target'))
+        !modifier.hasOwnProperty('launched')
       ) {
         modifier.launched = { add: ['unspread', 'spread'] };
       }

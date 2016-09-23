@@ -1,6 +1,6 @@
 {
   "name": "ancient-graph-spreading",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Automatic maintenance spreading of graph according other graphs.",
   "keywords": [
     "javascript",

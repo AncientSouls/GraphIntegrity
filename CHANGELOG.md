@@ -1,4 +1,4 @@
-#### 0.0.5 (2016-9-15)
+#### 0.0.6 (2016-9-23)
 
 ##### Documentation Changes
 
@@ -6,6 +6,11 @@
 
 ##### New Features
 
+* **each:** Move each into custom async callbacks method in class. ([30a7653c](https://github.com/AncientSouls/GraphSpreading/commit/30a7653c8704dda963f554facc963d6f0849c08c))
+* **async:** universal each syntax ([b5e04dfe](https://github.com/AncientSouls/GraphSpreading/commit/b5e04dfee1b9f86bc2cb6d5a86578cd636d1a1b8))
+* **graphs:**
+  * app logic out of package ([760e8544](https://github.com/AncientSouls/GraphSpreading/commit/760e85448481557a81d3b5f592c8616c298b586a))
+  * respread class for spread->spreader dependencies ([ad7c2ffc](https://github.com/AncientSouls/GraphSpreading/commit/ad7c2ffc16f7f79e3aceb8a95aa57d4d35cb4940))
 * **path:** fromFields toFields #1 ([1d404c94](https://github.com/AncientSouls/GraphSpreading/commit/1d404c94c31aa605ef2071e51546ae5c24fe8a5b))
 * **graph:** constructor config argument support #6 ([76104458](https://github.com/AncientSouls/GraphSpreading/commit/76104458011a312e8bd0aa0cab3bb430152ad7a1))
 * **spreading:** spreadTo #4 and unspread #5 ([ea6e2e3a](https://github.com/AncientSouls/GraphSpreading/commit/ea6e2e3aa78924ef3353bda9833cee57c1616f6a))
@@ -13,6 +18,7 @@
 
 ##### Bug Fixes
 
+* **scripts:** useless ([66d08c1e](https://github.com/AncientSouls/GraphSpreading/commit/66d08c1e24a1f13dc76ac4d7519ac0044f59e04f))
 * **async:** Move callback from push to drain ([9385fa0a](https://github.com/AncientSouls/GraphSpreading/commit/9385fa0a9e9554c578fd5d9daa1844e8b6008ddb))
 * **spreading:** Wrong field name ([befd9659](https://github.com/AncientSouls/GraphSpreading/commit/befd9659d8779040c7bf95b23f18b043b63cd173))
 * **package:** Not need to compile after install ([fc4c20f0](https://github.com/AncientSouls/GraphSpreading/commit/fc4c20f0cae3604ed305c0a5bdc511b420645d04))

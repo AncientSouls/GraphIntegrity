@@ -132,17 +132,19 @@ export default function testQueue(generageGraphSpreading, ids) {
       queueSpreading.removedPathLink(pathGraph, oldLink);
     });
     pathGraph.removed.on('update', (oldLink, newLink) => {
-      spreadGraph.fetch({}, undefined, (error, spreadLinks) => {
-        assert.deepEqual(spreadLinks, [
-          { id: 'spread/0', source: 'a', target: 'b' }
-        ]);
-        pathGraph.fetch({}, undefined, (error, pathLinks) => {
-          assert.deepEqual(pathLinks, [
-            { id: 'path/1', source: 'c', target: 'd', launched: [] }
+      setTimeout(() => {
+        spreadGraph.fetch({}, undefined, (error, spreadLinks) => {
+          assert.deepEqual(spreadLinks, [
+            { id: 'spread/0', source: 'a', target: 'b' }
           ]);
-          done();
+          pathGraph.fetch({}, undefined, (error, pathLinks) => {
+            assert.deepEqual(pathLinks, [
+              { id: 'path/1', source: 'c', target: 'd', launched: [] }
+            ]);
+            done();
+          });
         });
-      });
+      }, 200);
     });
     
     spreadGraph.insert({ source: ids[0], target: ids[1] }, (error, spreadLinkId0) => {

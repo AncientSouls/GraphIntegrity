@@ -38,11 +38,11 @@ class GraphSpreading {
       [this.spreadGraph.variableField]: pathLink[fromField]
     }, undefined, (error, spreadLinks) => {
       if (spreadLinks.length) {
-        var queue = async.queue((spreadLink, next) => {
-          this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, handler, next);
+        async.each(spreadLinks, (spreadLink, next) => {
+          this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, handler, () => { next(); });
+        }, () => {
+          if (callback) callback();
         });
-        if (callback) queue.drain = () => { callback(); };
-        queue.push(spreadLinks);
       } else {
         if (callback) callback();
       }
@@ -96,11 +96,11 @@ class GraphSpreading {
    * @param {GraphSpreading~spreadFromSpreadLinkByPathGraphCallback} [callback]
    */
   spreadFromSpreadLink(spreadLink, context, handler, callback) {
-    var queue = async.queue((pathGraph, callback) => {
-      this.spreadFromSpreadLinkByPathGraph(spreadLink, pathGraph, context, handler, callback);
+    async.each(this.pathGraphs, (pathGraph, next) => {
+      this.spreadFromSpreadLinkByPathGraph(spreadLink, pathGraph, context, handler, next);
+    }, () => {
+      if (callback) callback();
     });
-    queue.drain = () => { if (callback) callback(); }
-    queue.push(this.pathGraphs);
   }
   
   /**
@@ -116,11 +116,11 @@ class GraphSpreading {
     pathGraph.fetch({
       [fromField]: spreadLink[this.spreadGraph.variableField]
     }, undefined, (error, pathLinks) => {
-      var queue = async.queue((pathLink, callback) => {
-        this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, handler, callback);
+      async.each(pathLinks, (pathLink, next) => {
+        this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, handler, next);
+      }, () => {
+        if (callback) callback();
       });
-      queue.drain = () => { if (callback) callback(); }
-      queue.push(pathLinks);
     });
   }
   
@@ -232,14 +232,14 @@ class GraphSpreading {
         if (error) {
           if (callback) callback(error);
         } else {
-          var queue = async.queue((spreadLink, next) => {
+          async.each(spreadLinks, (spreadLink, next) => {
             this.spreadGraph.remove(spreadLink.id, (error, count) => {
               handler(error, spreadLink);
               next();
             }, context);
+          }, () => {
+            if (callback) callback(undefined, spreadLinks.length);
           });
-          if (callback) queue.drain = () => { callback(undefined, spreadLinks.length); }
-          queue.push(spreadLinks);
         }
       });
     } else {
@@ -277,14 +277,14 @@ class GraphSpreading {
         if (error) {
           if (callback) callback(error);
         } else {
-          var queue = async.queue((spreadLink, next) => {
+          async.each(spreadLinks, (spreadLink, next) => {
             this.spreadGraph.remove(spreadLink.id, (error, count) => {
               handler(error, spreadLink);
               next();
             }, context);
+          }, () => {
+            if (callback) callback(undefined, spreadLinks.length);
           });
-          if (callback) queue.drain = () => { callback(undefined, spreadLinks.length); }
-          queue.push(spreadLinks);
         }
       });
     } else {
@@ -321,7 +321,7 @@ class GraphSpreading {
        if (error) {
          if (callback) callback(error);
        } else {
-         var queue = async.queue((spreadLink, next) => {
+          async.each(spreadLinks, (spreadLink, next) => {
            this.spreadGraph._unspreadingHandler(spreadLink, context, (permission) => {
              if (permission) {
                this.spreadGraph.remove(spreadLink.id, (error, count) => {
@@ -330,9 +330,9 @@ class GraphSpreading {
                }, context);
              }
            });
-         });
-         if (callback) queue.drain = () => { callback(undefined, spreadLinks.length); }
-         queue.push(spreadLinks);
+          }, () => {
+            if (callback) callback(undefined, spreadLinks.length);
+          });
        }
      });
   }
@@ -361,7 +361,7 @@ class GraphSpreading {
    */
    
   spreadTo(id, context, handler, callback) {
-    var queue = async.queue((pathGraph, nextPathGraph) => {
+    async.each(this.pathGraphs, (pathGraph, nextPathGraph) => {
       pathGraph.fetch({
         [pathGraph.toFields[0]]: id
       }, undefined, (error, pathLinks) => {
@@ -371,9 +371,9 @@ class GraphSpreading {
           nextPathGraph();
         });
       });
+    }, () => {
+      if (callback) callback();
     });
-    if (callback) queue.drain = () => { callback(); }
-    queue.push(this.pathGraphs);
   }
   
   /**

@@ -152,13 +152,15 @@ function testQueue(generageGraphSpreading, ids) {
       queueSpreading.removedPathLink(pathGraph, oldLink);
     });
     pathGraph.removed.on('update', function (oldLink, newLink) {
-      spreadGraph.fetch({}, undefined, function (error, spreadLinks) {
-        _chai.assert.deepEqual(spreadLinks, [{ id: 'spread/0', source: 'a', target: 'b' }]);
-        pathGraph.fetch({}, undefined, function (error, pathLinks) {
-          _chai.assert.deepEqual(pathLinks, [{ id: 'path/1', source: 'c', target: 'd', launched: [] }]);
-          done();
+      setTimeout(function () {
+        spreadGraph.fetch({}, undefined, function (error, spreadLinks) {
+          _chai.assert.deepEqual(spreadLinks, [{ id: 'spread/0', source: 'a', target: 'b' }]);
+          pathGraph.fetch({}, undefined, function (error, pathLinks) {
+            _chai.assert.deepEqual(pathLinks, [{ id: 'path/1', source: 'c', target: 'd', launched: [] }]);
+            done();
+          });
         });
-      });
+      }, 200);
     });
 
     spreadGraph.insert({ source: ids[0], target: ids[1] }, function (error, spreadLinkId0) {

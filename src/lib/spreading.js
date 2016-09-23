@@ -17,6 +17,17 @@ class GraphSpreading {
   }
   
   /**
+   * Custom async callbacks support
+   * 
+   * @param {Array|Iterable|Object} coll - A collection to iterate over.
+   * @param {function} iteratee - A function to apply to each item in coll.
+   * @param {function} callback - A callback which is called when all iteratee functions have finished.
+   */
+  each(coll, iteratee, callback) {
+    async.each(coll, iteratee, callback);
+  }
+  
+  /**
    * @param {PathGraph} pathGraph
    */
   addPathGraph(pathGraph) {
@@ -38,7 +49,7 @@ class GraphSpreading {
       [this.spreadGraph.variableField]: pathLink[fromField]
     }, undefined, (error, spreadLinks) => {
       if (spreadLinks.length) {
-        async.each(spreadLinks, (spreadLink, next) => {
+        this.each(spreadLinks, (spreadLink, next) => {
           this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, handler, () => { next(); });
         }, () => {
           if (callback) callback();
@@ -59,7 +70,7 @@ class GraphSpreading {
    * @param {GraphSpreading~spreadByPathLinkCallback} [callback]
    */
   spreadByPathLink(pathGraph, pathLink, context, handler, callback) {
-    async.each(pathGraph.fromFields, (fromField, next) => {
+    this.each(pathGraph.fromFields, (fromField, next) => {
       this._spreadByPathLink(fromField, pathGraph, pathLink, context, handler, next);
     }, callback);
   }
@@ -96,7 +107,7 @@ class GraphSpreading {
    * @param {GraphSpreading~spreadFromSpreadLinkByPathGraphCallback} [callback]
    */
   spreadFromSpreadLink(spreadLink, context, handler, callback) {
-    async.each(this.pathGraphs, (pathGraph, next) => {
+    this.each(this.pathGraphs, (pathGraph, next) => {
       this.spreadFromSpreadLinkByPathGraph(spreadLink, pathGraph, context, handler, next);
     }, () => {
       if (callback) callback();
@@ -116,7 +127,7 @@ class GraphSpreading {
     pathGraph.fetch({
       [fromField]: spreadLink[this.spreadGraph.variableField]
     }, undefined, (error, pathLinks) => {
-      async.each(pathLinks, (pathLink, next) => {
+      this.each(pathLinks, (pathLink, next) => {
         this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, handler, next);
       }, () => {
         if (callback) callback();
@@ -133,7 +144,7 @@ class GraphSpreading {
    * @param {GraphSpreading~spreadFromSpreadLinkByPathGraphCallback} [callback]
    */
   spreadFromSpreadLinkByPathGraph(spreadLink, pathGraph, context, handler, callback) {
-    async.each(pathGraph.fromFields, (fromField, next) => {
+    this.each(pathGraph.fromFields, (fromField, next) => {
       this._spreadFromSpreadLinkByPathGraph(fromField, spreadLink, pathGraph, context, handler, next);
     }, callback);
   }
@@ -193,7 +204,7 @@ class GraphSpreading {
    * @param {GraphSpreading~spreadFromSpreadLinkByPathLinkCallback} [callback]
    */
   spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, handler, callback) {
-    async.each(pathGraph.toFields, (toField, next) => {
+    this.each(pathGraph.toFields, (toField, next) => {
       this._spreadFromSpreadLinkByPathLink(toField, spreadLink, pathGraph, pathLink, context, (error, id, prev, pathGraph, pathLink) => {
         if (handler) handler(error, id, prev, pathGraph, pathLink);
         next();
@@ -232,7 +243,7 @@ class GraphSpreading {
         if (error) {
           if (callback) callback(error);
         } else {
-          async.each(spreadLinks, (spreadLink, next) => {
+          this.each(spreadLinks, (spreadLink, next) => {
             this.spreadGraph.remove(spreadLink.id, (error, count) => {
               handler(error, spreadLink);
               next();
@@ -277,7 +288,7 @@ class GraphSpreading {
         if (error) {
           if (callback) callback(error);
         } else {
-          async.each(spreadLinks, (spreadLink, next) => {
+          this.each(spreadLinks, (spreadLink, next) => {
             this.spreadGraph.remove(spreadLink.id, (error, count) => {
               handler(error, spreadLink);
               next();
@@ -321,7 +332,7 @@ class GraphSpreading {
        if (error) {
          if (callback) callback(error);
        } else {
-          async.each(spreadLinks, (spreadLink, next) => {
+          this.each(spreadLinks, (spreadLink, next) => {
            this.spreadGraph._unspreadingHandler(spreadLink, context, (permission) => {
              if (permission) {
                this.spreadGraph.remove(spreadLink.id, (error, count) => {
@@ -361,11 +372,11 @@ class GraphSpreading {
    */
    
   spreadTo(id, context, handler, callback) {
-    async.each(this.pathGraphs, (pathGraph, nextPathGraph) => {
+    this.each(this.pathGraphs, (pathGraph, nextPathGraph) => {
       pathGraph.fetch({
         [pathGraph.toFields[0]]: id
       }, undefined, (error, pathLinks) => {
-        async.each(pathLinks, (pathLink, nextPathLink) => {
+        this.each(pathLinks, (pathLink, nextPathLink) => {
           this.spreadByPathLink(pathGraph, pathLink, context, handler, nextPathLink);
         }, function(error) {
           nextPathGraph();

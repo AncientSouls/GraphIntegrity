@@ -1,4 +1,4 @@
-#### 0.0.6 (2016-9-23)
+#### 0.0.7 (2016-9-24)
 
 ##### Documentation Changes
 
@@ -6,6 +6,7 @@
 
 ##### New Features
 
+* **launched:** Manager of field launched move out of Path and Spreader graph. ([11f82123](https://github.com/AncientSouls/GraphSpreading/commit/11f82123a61ea82bc0bde50f43addb7c35ec22bb))
 * **each:** Move each into custom async callbacks method in class. ([30a7653c](https://github.com/AncientSouls/GraphSpreading/commit/30a7653c8704dda963f554facc963d6f0849c08c))
 * **async:** universal each syntax ([b5e04dfe](https://github.com/AncientSouls/GraphSpreading/commit/b5e04dfee1b9f86bc2cb6d5a86578cd636d1a1b8))
 * **graphs:**

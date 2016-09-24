@@ -66,7 +66,7 @@ describe('AncientSouls/GraphSpreading', function () {
 
     // PathGraph
 
-    var ExistedPathGraph = (0, _.factoryPathGraph)(ExistedGraph);
+    var ExistedPathGraph = (0, _.factoryLaunchedGraph)((0, _.factoryPathGraph)(ExistedGraph));
     var NonExistedPathGraph = NonExistedGraph;
 
     // SpreadGraph
@@ -207,7 +207,7 @@ describe('AncientSouls/GraphSpreading', function () {
 
       // PathGraph
 
-      var ExistedPathGraph = (0, _.factoryPathGraph)(ExistedGraph);
+      var ExistedPathGraph = (0, _.factoryLaunchedGraph)((0, _.factoryPathGraph)(ExistedGraph));
       var NonExistedPathGraph = NonExistedGraph;
 
       // SpreadGraph
@@ -251,7 +251,7 @@ describe('AncientSouls/GraphSpreading', function () {
 
       // SpreaderGraph
 
-      var ExistedSpreaderGraph = (0, _.factorySpreaderGraph)(ExistedGraph);
+      var ExistedSpreaderGraph = (0, _.factoryLaunchedGraph)((0, _.factorySpreaderGraph)(ExistedGraph));
       var NonExistedSpreaderGraph = NonExistedGraph;
 
       // Graphs instances

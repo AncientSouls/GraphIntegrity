@@ -4,7 +4,11 @@ import { assert } from 'chai';
 
 import { Graph } from 'ancient-graph/lib/adapters/object.js';
 
-import { factoryPathGraph, factorySpreadGraph, factorySpreaderGraph, GraphSpreading, QueueSpreading as AncientQueueSpreading } from '../';
+import {
+  factoryLaunchedGraph, 
+  factoryPathGraph, factorySpreadGraph, factorySpreaderGraph,
+  GraphSpreading, QueueSpreading as AncientQueueSpreading
+} from '../';
 import { factoryExistedGraph, factoryNonExistedGraph } from 'ancient-graph-removed';
 
 import testGraphSpreading from './testSpreading.js';
@@ -32,7 +36,7 @@ describe('AncientSouls/GraphSpreading', function() {
     
     // PathGraph
     
-    var ExistedPathGraph = factoryPathGraph(ExistedGraph);
+    var ExistedPathGraph = factoryLaunchedGraph(factoryPathGraph(ExistedGraph));
     var NonExistedPathGraph = NonExistedGraph;
     
     // SpreadGraph
@@ -138,7 +142,7 @@ describe('AncientSouls/GraphSpreading', function() {
       
       // PathGraph
       
-      var ExistedPathGraph = factoryPathGraph(ExistedGraph);
+      var ExistedPathGraph = factoryLaunchedGraph(factoryPathGraph(ExistedGraph));
       var NonExistedPathGraph = NonExistedGraph;
       
       // SpreadGraph
@@ -167,7 +171,7 @@ describe('AncientSouls/GraphSpreading', function() {
       
       // SpreaderGraph
       
-      var ExistedSpreaderGraph = factorySpreaderGraph(ExistedGraph);
+      var ExistedSpreaderGraph = factoryLaunchedGraph(factorySpreaderGraph(ExistedGraph));
       var NonExistedSpreaderGraph = NonExistedGraph;
       
       // Graphs instances

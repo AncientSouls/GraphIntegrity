@@ -3,18 +3,18 @@ import { factoryPathGraph, factorySpreadGraph, GraphSpreading, QueueSpreading } 
 import lodash from 'lodash';
 
 export default function testSpreader(generageGraphSpreading, ids) {
-  it('#insertedSpreaderLink', function(done) {
+  it('#spreadBySpreader', function(done) {
     var { pathGraph, spreadGraph, spreaderGraph, graphSpreading, queueSpreading } = generageGraphSpreading();
     
     spreadGraph.on('insert', (oldLink, newLink) => {
-      queueSpreading.insertedSpreadLink(newLink);
+      queueSpreading.spreadBySpread(newLink);
     });
     spreadGraph.on('remove', (oldLink, newLink) => {
-      queueSpreading.removedSpreadLink(oldLink);
+      queueSpreading.unspreadBySpread(oldLink);
     });
     
     spreaderGraph.on('insert', (oldLink, newLink) => {
-      queueSpreading.insertedSpreaderLink(spreaderGraph, newLink);
+      queueSpreading.spreadBySpreader(spreaderGraph, newLink);
     });
     
     spreaderGraph.on('update', (oldLink, newLink) => {
@@ -50,29 +50,29 @@ export default function testSpreader(generageGraphSpreading, ids) {
     });
   });
   
-  it('#updatedSourceOrTargetSpreaderLink #updatedLaunchedUnspreadSpreaderLink', function(done) {
+  it('#unspreadBySpreader #spreadBySpreader', function(done) {
     var { pathGraph, spreadGraph, spreaderGraph, graphSpreading, queueSpreading } = generageGraphSpreading();
     
     spreadGraph.on('insert', (oldLink, newLink) => {
-      queueSpreading.insertedSpreadLink(newLink);
+      queueSpreading.spreadBySpread(newLink);
     });
     spreadGraph.on('remove', (oldLink, newLink) => {
-      queueSpreading.removedSpreadLink(oldLink);
+      queueSpreading.unspreadBySpread(oldLink);
     });
     
     spreaderGraph.on('insert', (oldLink, newLink) => {
-      queueSpreading.insertedSpreaderLink(spreaderGraph, newLink);
+      queueSpreading.spreadBySpreader(spreaderGraph, newLink);
     });
     
     spreaderGraph.on('update', (oldLink, newLink) => {
       if (oldLink.source != newLink.source || oldLink.target != newLink.target) {
-        queueSpreading.updatedSourceOrTargetSpreaderLink(spreaderGraph, newLink);
+        queueSpreading.unspreadBySpreader(spreaderGraph, newLink);
       } else {
         if (newLink.target == ids[1]) {
           spreaderGraph.update(newLink.id, { target: ids[2] });
         } else {
           if (newLink.launched.length) {
-            queueSpreading.updatedLaunchedUnspreadSpreaderLink(spreaderGraph, newLink);
+            queueSpreading.spreadBySpreader(spreaderGraph, newLink);
           } else {
             spreadGraph.fetch({}, undefined, (error, results) => {
               assert.deepEqual(results, [
@@ -104,25 +104,25 @@ export default function testSpreader(generageGraphSpreading, ids) {
     });
   });
   
-  it('#removedSpreaderLink', function(done) {
+  it('#unspreadBySpreader', function(done) {
     var { pathGraph, spreadGraph, spreaderGraph, graphSpreading, queueSpreading } = generageGraphSpreading();
     
     spreadGraph.on('insert', (oldLink, newLink) => {
-      queueSpreading.insertedSpreadLink(newLink);
+      queueSpreading.spreadBySpread(newLink);
     });
     spreadGraph.on('remove', (oldLink, newLink) => {
-      queueSpreading.removedSpreadLink(oldLink);
+      queueSpreading.unspreadBySpread(oldLink);
     });
     
     spreaderGraph.on('insert', (oldLink, newLink) => {
-      queueSpreading.insertedSpreaderLink(spreaderGraph, newLink);
+      queueSpreading.spreadBySpreader(spreaderGraph, newLink);
     });
     spreaderGraph.on('update', (oldLink, newLink) => {
       assert.lengthOf(newLink.launched, 0);
       spreaderGraph.remove(newLink.id);
     });
     spreaderGraph.on('remove', (oldLink, newLink) => {
-      queueSpreading.removedSpreaderLink(spreaderGraph, oldLink);
+      queueSpreading.unspreadBySpreader(spreaderGraph, oldLink);
     });
     
     spreaderGraph.removed.on('update', (oldLink, newLink) => {

@@ -3,19 +3,19 @@ import { factoryPathGraph, factorySpreadGraph, GraphSpreading, QueueSpreading } 
 import lodash from 'lodash';
 
 export default function testQueue(generageGraphSpreading, ids) {
-  it('#insertedPathLink', function(done) {
+  it('#spreadByPath', function(done) {
     var { pathGraph, spreadGraph, graphSpreading, queueSpreading } = generageGraphSpreading();
     
     spreadGraph.insert({ source: ids[0], target: ids[1] }, (error, spreadLinkId0) => {
       pathGraph.insert({ source: ids[2], target: ids[3] }, (error, pathLinkId0) => {
         spreadGraph.on('insert', (oldLink, newLink) => {
-          queueSpreading.insertedSpreadLink(newLink);
+          queueSpreading.spreadBySpread(newLink);
         });
         spreadGraph.on('remove', (oldLink, newLink) => {
-          queueSpreading.removedSpreadLink(oldLink);
+          queueSpreading.unspreadBySpread(oldLink);
         });
         pathGraph.on('insert', (oldLink, newLink) => {
-          queueSpreading.insertedPathLink(pathGraph, newLink);
+          queueSpreading.spreadByPath(pathGraph, newLink);
         });
         pathGraph.on('update', (oldLink, newLink) => {
           assert.lengthOf(newLink.launched, 0);
@@ -40,23 +40,23 @@ export default function testQueue(generageGraphSpreading, ids) {
       });
     });
   });
-  it('#updatedSourceOrTargetPathLink #updatedLaunchedUnspreadPathLink', function(done) {
+  it('#unspreadByPath #spreadByPath', function(done) {
     var { pathGraph, spreadGraph, graphSpreading, queueSpreading } = generageGraphSpreading();
     
     var mainPathLink;
     
     spreadGraph.on('insert', (oldLink, newLink) => {
-      queueSpreading.insertedSpreadLink(newLink);
+      queueSpreading.spreadBySpread(newLink);
     });
     spreadGraph.on('remove', (oldLink, newLink) => {
-      queueSpreading.removedSpreadLink(oldLink);
+      queueSpreading.unspreadBySpread(oldLink);
     });
     pathGraph.on('insert', (oldLink, newLink) => {
-      queueSpreading.insertedPathLink(pathGraph, newLink);
+      queueSpreading.spreadByPath(pathGraph, newLink);
     });
     pathGraph.on('update', (oldLink, newLink) => {
       if (oldLink.source != newLink.source || oldLink.target != newLink.target) {
-        queueSpreading.updatedSourceOrTargetPathLink(pathGraph, newLink);
+        queueSpreading.unspreadByPath(pathGraph, newLink);
       } else if(!lodash.isEqual(oldLink.launched, newLink.launched)) {
         if (newLink.id == mainPathLink && newLink.launched == 0) {
           spreadGraph.fetch({}, undefined, (error, results) => {
@@ -92,7 +92,7 @@ export default function testQueue(generageGraphSpreading, ids) {
             });
           });
         } else {
-          queueSpreading.updatedLaunchedUnspreadPathLink(pathGraph, newLink);
+          queueSpreading.spreadByPath(pathGraph, newLink);
         }
       }
     });
@@ -107,29 +107,29 @@ export default function testQueue(generageGraphSpreading, ids) {
     });
   });
   
-  it('#removedPathLink', function(done) {
+  it('#unspreadByPath', function(done) {
     var { pathGraph, spreadGraph, graphSpreading, queueSpreading } = generageGraphSpreading();
     
     var mainPathLink;
     
     spreadGraph.on('insert', (oldLink, newLink) => {
-      queueSpreading.insertedSpreadLink(newLink);
+      queueSpreading.spreadBySpread(newLink);
     });
     spreadGraph.on('remove', (oldLink, newLink) => {
-      queueSpreading.removedSpreadLink(oldLink);
+      queueSpreading.unspreadBySpread(oldLink);
     });
     pathGraph.on('insert', (oldLink, newLink) => {
-      queueSpreading.insertedPathLink(pathGraph, newLink);
+      queueSpreading.spreadByPath(pathGraph, newLink);
     });
     pathGraph.on('update', (oldLink, newLink) => {
       if (oldLink.source != newLink.source || oldLink.target != newLink.target) {
-        queueSpreading.updatedSourceOrTargetPathLink(pathGraph, newLink);
+        queueSpreading.unspreadByPath(pathGraph, newLink);
       } else if(!lodash.isEqual(oldLink.launched, newLink.launched)) {
-        queueSpreading.updatedLaunchedUnspreadPathLink(pathGraph, newLink);
+        queueSpreading.spreadByPath(pathGraph, newLink);
       }
     });
     pathGraph.on('remove', (oldLink, newLink) => {
-      queueSpreading.removedPathLink(pathGraph, oldLink);
+      queueSpreading.unspreadByPath(pathGraph, oldLink);
     });
     pathGraph.removed.on('update', (oldLink, newLink) => {
       setTimeout(() => {

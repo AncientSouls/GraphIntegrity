@@ -160,7 +160,7 @@ function testGraphSpreading(generateGraphSpreading, ids) {
     });
   });
 
-  it('#unspreadFromRemovedSpreadLinkByPrevId', function (done) {
+  it('#unspreadFromunspreadBySpreadByPrevId', function (done) {
     var _generateGraphSpreadi3 = generateGraphSpreading();
 
     var pathGraph = _generateGraphSpreadi3.pathGraph;
@@ -173,7 +173,7 @@ function testGraphSpreading(generateGraphSpreading, ids) {
           spreadGraph.insert({ source: ids[0], target: ids[2], prev: spreadLinkId0, path: pathLinkId0, root: spreadLinkId0 }, function (error, spreadLinkId1) {
             spreadGraph.insert({ source: ids[0], target: ids[3], prev: spreadLinkId1, path: pathLinkId1, root: spreadLinkId0 }, function (error, spreadLinkId2) {
               spreadGraph.remove(spreadLinkId0, function (error, count) {
-                graphSpreading.unspreadFromRemovedSpreadLinkByPrevId(spreadLinkId0, function (error, spreadLink1) {
+                graphSpreading.unspreadFromunspreadBySpreadByPrevId(spreadLinkId0, function (error, spreadLink1) {
                   _chai.assert.ifError(error);
                 }, function (error, count) {
                   _chai.assert.ifError(error);

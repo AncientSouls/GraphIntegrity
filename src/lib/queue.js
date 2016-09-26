@@ -51,50 +51,26 @@ class QueueSpreading {
   }
   
   /**
-   * Reacts to insert a new path.
+   * Reacts to insert a new path and reacts to update launched remove unspread, but spread still exists. This method triggers the first step of the second spread queue.
    * 
    * @param {PathGraph} pathGraph
    * @param {PathLink} pathLink
    * @param {string[]} pathLink.launched - ['spread']
    */
-  insertedPathLink(pathGraph, pathLink) {
+  spreadByPath(pathGraph, pathLink) {
     this.graphSpreading.spreadByPathLink(pathGraph, pathLink, { process: pathLink.id }, undefined, () => {
       this.mayBeEndedLaunched(pathLink.id, 'spread');
     });
   }
   
   /**
-   * Reacts to update source or target in path. Then it launched two queues, unspread and spread. This method triggers the first step of the first unspread queue. After removal of unspread from launched from path, you need to start the second queue with method updatedLaunchedUnspreadPathLink.
+   * Reacts to remove path and reacts to update source or target in path. Then it launched two queues, unspread and spread. This method triggers the first step of the first unspread queue. After removal of unspread from launched from path, you need to start the second queue with method spreadByPath.
    * 
    * @param {PathGraph} pathGraph
    * @param {PathLink} pathLink
    * @param {string[]} pathLink.launched - ['unspread', 'spread']
    */
-  updatedSourceOrTargetPathLink(pathGraph, pathLink) {
-    this.graphSpreading.unspreadByPathId(pathLink.id, { process: pathLink.id }, undefined, () => {
-      this.mayBeEndedLaunched(pathLink.id, 'unspread');
-    });
-  }
-  
-  /**
-   * Reacts to update launched remove unspread, but spread still exists. This method triggers the first step of the second spread queue.
-   * 
-   * @param {PathGraph} pathGraph
-   * @param {PathLink} pathLink
-   * @param {string[]} pathLink.launched - ['spread']
-   */
-  updatedLaunchedUnspreadPathLink(pathGraph, pathLink) {
-    this.insertedPathLink(pathGraph, pathLink);
-  }
-   
-  /**
-   * Reacts to remove path. Similar to the method updatedSourceOrTargetPathLink, but the work is gone  with pathGraph.removed.
-   * 
-   * @param {PathGraph} pathGraph
-   * @param {PathLink} pathLink
-   * @param {string[]} pathLink.launched - ['unspread']
-   */
-  removedPathLink(pathGraph, pathLink) {
+  unspreadByPath(pathGraph, pathLink) {
     this.graphSpreading.unspreadByPathId(pathLink.id, { process: pathLink.id }, undefined, () => {
       this.mayBeEndedLaunched(pathLink.id, 'unspread');
     });
@@ -107,7 +83,7 @@ class QueueSpreading {
    * @param {string[]} [pathLink.launched]
    * @param {string[]} [pathLink.process]
    */
-  insertedSpreadLink(spreadLink) {
+  spreadBySpread(spreadLink) {
     var
       context = {},
       process = false
@@ -133,7 +109,7 @@ class QueueSpreading {
    * 
    * @param {SpreadLink} spreadLink
    */
-  removedSpreadLink(spreadLink) {
+  unspreadBySpread(spreadLink) {
     var
       context = { process: {} },
       process = false,
@@ -148,7 +124,7 @@ class QueueSpreading {
     } else {
       throw new Error('SpreadLink '+spreadLink.id+' should have `launched` or `process` field.');
     }
-    this.graphSpreading.unspreadFromRemovedSpreadLinkByPrevId(spreadLink.id, context, undefined, () => {
+    this.graphSpreading.unspreadFromunspreadBySpreadByPrevId(spreadLink.id, context, undefined, () => {
       if (process) {
         this.graphSpreading.spreadGraph.removed.update(spreadLink.id, { process: { remove: context.process }});
       }
@@ -157,13 +133,13 @@ class QueueSpreading {
   }
   
   /**
-   * Reacts to insert a new spreader.
+   * Reacts to insert a new spreader and reacts to update launched remove unspread, but spread still exists. This method triggers the first step of the second spread queue.
    * 
    * @param {SpreaderGraph} spreaderGraph
    * @param {SpreaderLink} spreaderLink
    * @param {string[]} spreaderLink.launched - ['spread']
    */
-  insertedSpreaderLink(spreaderGraph, spreaderLink) {
+  spreadBySpreader(spreaderGraph, spreaderLink) {
     this.graphSpreading.spreadNewSpreadLink({
       [this.graphSpreading.spreadGraph.constantField]: spreaderLink[spreaderGraph.constantField],
       [this.graphSpreading.spreadGraph.variableField]: spreaderLink[spreaderGraph.variableField],
@@ -174,39 +150,13 @@ class QueueSpreading {
   }
   
   /**
-   * Reacts to update source or target in spreader. Then it launched two queues, unspread and spread. This method triggers the first step of the first unspread queue. After removal of unspread from launched from spreader, you need to start the second queue with method updatedLaunchedUnspreadSpreaderLink.
+   * Reacts to remove spreader link and reacts to update source or target in spreader. Then it launched two queues, unspread and spread. This method triggers the first step of the first unspread queue. After removal of unspread from launched from spreader, you need to start the second queue with method spreadBySpreader.
    * 
    * @param {SpreaderGraph} spreaderGraph
    * @param {SpreaderLink} spreaderLink
    * @param {string[]} spreaderLink.launched - ['unspread', 'spread']
    */
-  updatedSourceOrTargetSpreaderLink(spreaderGraph, spreaderLink) {
-    this.graphSpreading.spreadGraph.remove({
-      spreader: spreaderLink.id
-    }, (error, count) => {
-      this.mayBeEndedLaunched(spreaderLink.id, 'unspread');
-    }, { modifier: { process: { add: spreaderLink.id }}});
-  }
-  
-  /**
-   * Reacts to update launched remove unspread, but spread still exists. This method triggers the first step of the second spread queue.
-   * 
-   * @param {SpreaderGraph} spreaderGraph
-   * @param {SpreaderLink} spreaderLink
-   * @param {string[]} spreaderLink.launched - ['spread']
-   */
-  updatedLaunchedUnspreadSpreaderLink(spreaderGraph, spreaderLink) {
-    this.insertedSpreaderLink(spreaderGraph, spreaderLink);
-  }
-   
-  /**
-   * Reacts to remove spreader link. Similar to the method updatedSourceOrTargetSpreaderLink, but the work is gone  with spreaderGraph.removed.
-   * 
-   * @param {SpreaderGraph} spreaderGraph
-   * @param {SpreaderLink} spreaderLink
-   * @param {string[]} spreaderLink.launched - ['unspread']
-   */
-  removedSpreaderLink(spreaderGraph, spreaderLink) {
+  unspreadBySpreader(spreaderGraph, spreaderLink) {
     this.graphSpreading.spreadGraph.remove({
       spreader: spreaderLink.id
     }, (error, count) => {

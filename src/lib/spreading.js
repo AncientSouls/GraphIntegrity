@@ -234,10 +234,10 @@ class GraphSpreading {
    * 
    * @param {string} spreadLinkId
    * @param {Object} [context]
-   * @param {GraphSpreading~unspreadFromRemovedSpreadLinkByPrevIdHandler} [handler]
-   * @param {GraphSpreading~unspreadFromRemovedSpreadLinkByPrevIdCallback} [callback]
+   * @param {GraphSpreading~unspreadFromunspreadBySpreadByPrevIdHandler} [handler]
+   * @param {GraphSpreading~unspreadFromunspreadBySpreadByPrevIdCallback} [callback]
    */
-  unspreadFromRemovedSpreadLinkByPrevId(spreadLinkId, context, handler, callback) {
+  unspreadFromunspreadBySpreadByPrevId(spreadLinkId, context, handler, callback) {
     if (handler) {
       this.spreadGraph.fetch({ prev: spreadLinkId }, undefined, (error, spreadLinks) => {
         if (error) {
@@ -261,7 +261,7 @@ class GraphSpreading {
   /**
    * Optional handler. If present, called with an error object as the first argument and, if no error, others arguments with results of unspreading.
    *
-   * @callback GraphSpreading~unspreadFromRemovedSpreadLinkByPrevIdHandler
+   * @callback GraphSpreading~unspreadFromunspreadBySpreadByPrevIdHandler
    * @param {Error} [error]
    * @param {SpreadLink} [spreadLink]
    */
@@ -269,7 +269,7 @@ class GraphSpreading {
   /**
    * Optional callback.
    *
-   * @callback GraphSpreading~unspreadFromRemovedSpreadLinkByPrevIdCallback
+   * @callback GraphSpreading~unspreadFromunspreadBySpreadByPrevIdCallback
    * @param {Error} [error]
    * @param {number} [count]
    */

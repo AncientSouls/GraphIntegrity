@@ -16,7 +16,7 @@ var _lodash2 = _interopRequireDefault(_lodash);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function testQueue(generageGraphSpreading, ids) {
-  it('#insertedPathLink', function (done) {
+  it('#spreadByPath', function (done) {
     var _generageGraphSpreadi = generageGraphSpreading();
 
     var pathGraph = _generageGraphSpreadi.pathGraph;
@@ -28,13 +28,13 @@ function testQueue(generageGraphSpreading, ids) {
     spreadGraph.insert({ source: ids[0], target: ids[1] }, function (error, spreadLinkId0) {
       pathGraph.insert({ source: ids[2], target: ids[3] }, function (error, pathLinkId0) {
         spreadGraph.on('insert', function (oldLink, newLink) {
-          queueSpreading.insertedSpreadLink(newLink);
+          queueSpreading.spreadBySpread(newLink);
         });
         spreadGraph.on('remove', function (oldLink, newLink) {
-          queueSpreading.removedSpreadLink(oldLink);
+          queueSpreading.unspreadBySpread(oldLink);
         });
         pathGraph.on('insert', function (oldLink, newLink) {
-          queueSpreading.insertedPathLink(pathGraph, newLink);
+          queueSpreading.spreadByPath(pathGraph, newLink);
         });
         pathGraph.on('update', function (oldLink, newLink) {
           _chai.assert.lengthOf(newLink.launched, 0);
@@ -55,7 +55,7 @@ function testQueue(generageGraphSpreading, ids) {
       });
     });
   });
-  it('#updatedSourceOrTargetPathLink #updatedLaunchedUnspreadPathLink', function (done) {
+  it('#unspreadByPath #spreadByPath', function (done) {
     var _generageGraphSpreadi2 = generageGraphSpreading();
 
     var pathGraph = _generageGraphSpreadi2.pathGraph;
@@ -67,17 +67,17 @@ function testQueue(generageGraphSpreading, ids) {
     var mainPathLink;
 
     spreadGraph.on('insert', function (oldLink, newLink) {
-      queueSpreading.insertedSpreadLink(newLink);
+      queueSpreading.spreadBySpread(newLink);
     });
     spreadGraph.on('remove', function (oldLink, newLink) {
-      queueSpreading.removedSpreadLink(oldLink);
+      queueSpreading.unspreadBySpread(oldLink);
     });
     pathGraph.on('insert', function (oldLink, newLink) {
-      queueSpreading.insertedPathLink(pathGraph, newLink);
+      queueSpreading.spreadByPath(pathGraph, newLink);
     });
     pathGraph.on('update', function (oldLink, newLink) {
       if (oldLink.source != newLink.source || oldLink.target != newLink.target) {
-        queueSpreading.updatedSourceOrTargetPathLink(pathGraph, newLink);
+        queueSpreading.unspreadByPath(pathGraph, newLink);
       } else if (!_lodash2.default.isEqual(oldLink.launched, newLink.launched)) {
         if (newLink.id == mainPathLink && newLink.launched == 0) {
           spreadGraph.fetch({}, undefined, function (error, results) {
@@ -106,7 +106,7 @@ function testQueue(generageGraphSpreading, ids) {
             });
           });
         } else {
-          queueSpreading.updatedLaunchedUnspreadPathLink(pathGraph, newLink);
+          queueSpreading.spreadByPath(pathGraph, newLink);
         }
       }
     });
@@ -121,7 +121,7 @@ function testQueue(generageGraphSpreading, ids) {
     });
   });
 
-  it('#removedPathLink', function (done) {
+  it('#unspreadByPath', function (done) {
     var _generageGraphSpreadi3 = generageGraphSpreading();
 
     var pathGraph = _generageGraphSpreadi3.pathGraph;
@@ -133,23 +133,23 @@ function testQueue(generageGraphSpreading, ids) {
     var mainPathLink;
 
     spreadGraph.on('insert', function (oldLink, newLink) {
-      queueSpreading.insertedSpreadLink(newLink);
+      queueSpreading.spreadBySpread(newLink);
     });
     spreadGraph.on('remove', function (oldLink, newLink) {
-      queueSpreading.removedSpreadLink(oldLink);
+      queueSpreading.unspreadBySpread(oldLink);
     });
     pathGraph.on('insert', function (oldLink, newLink) {
-      queueSpreading.insertedPathLink(pathGraph, newLink);
+      queueSpreading.spreadByPath(pathGraph, newLink);
     });
     pathGraph.on('update', function (oldLink, newLink) {
       if (oldLink.source != newLink.source || oldLink.target != newLink.target) {
-        queueSpreading.updatedSourceOrTargetPathLink(pathGraph, newLink);
+        queueSpreading.unspreadByPath(pathGraph, newLink);
       } else if (!_lodash2.default.isEqual(oldLink.launched, newLink.launched)) {
-        queueSpreading.updatedLaunchedUnspreadPathLink(pathGraph, newLink);
+        queueSpreading.spreadByPath(pathGraph, newLink);
       }
     });
     pathGraph.on('remove', function (oldLink, newLink) {
-      queueSpreading.removedPathLink(pathGraph, oldLink);
+      queueSpreading.unspreadByPath(pathGraph, oldLink);
     });
     pathGraph.removed.on('update', function (oldLink, newLink) {
       setTimeout(function () {

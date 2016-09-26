@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>SpreaderGraph - Documentation</title>
+    <title>respread.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,290 +28,62 @@
 
 <div id="main">
     
-    <h1 class="page-title">SpreaderGraph</h1>
+    <h1 class="page-title">respread.js</h1>
     
 
     
 
 
 
-
-<section>
-
-<header>
     
-        <h2>
-        SpreaderGraph
-        </h2>
-        
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * This method allows you to use RespreadGraph class to its inheritance chain.
+ * Lets perceive spread graph as a reason for the spreader graph.
+ * Fields launched, process, prev, path and root is required!
+ * Manage fields launched and process.
+ * Parent class mast be extended from class SpreadGraph.
+ * 
+ * @param {Class} ParentClassSpreadGraph
+ * @return {Class} RespreadGraph
+ * @description `import { factoryRespreadGraph } from 'ancient-graph-spreading';`
+ */
+function factoryRespreadGraph(ParentClassSpreadGraph) {
+  class RespreadGraph extends ParentClassSpreadGraph {
     
-</header>
-
-<article>
-    <div class="container-overview">
+    /**
+     * Parent insert with added 'respread' to launched field. You can override it field in modifier.
+     */
+    insert(modifier, callback, context) {
+      if (!modifier.launched) modifier.launched = ['respread'];
+      return super.insert(modifier, callback, context);
+    }
     
-        
-
-    
-
-    <h4 class="name" id="SpreaderGraph"><span class="type-signature"></span>new SpreaderGraph<span class="signature">(collection, fields, config)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>collection</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>A pointer to the collection dannymineobhodimye daapteru to work with the graph. This may be a connection to the SQL database and table name, for example, or a collection of Mongo.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>fields</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Comparison of the data in the collection of data in the graph. It is necessary for the adapter.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>config</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Additional config.</p>
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>constantField</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Constant field in graph</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>variableField</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Spreadable field in graph</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="spreader.js.html">spreader.js</a>, <a href="spreader.js.html#line19">line 19</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+    /**
+     * The method is strictly designed so that the class inherits from ExistedGraph.
+     * Adds to launched field custom value from context.
+     */
+    remove(selector, callback, context) {
+      if (!context) context = { launched: ['respread'] };
+      else if (!context.launched) context.launched = ['respread'];
+      else {
+        if (Object.prototype.toString.call(context.launched) === '[object Array]') {
+          context.launched.push('respread');
+        } else {
+          context.launched = [context.launched, 'respread'];
+        }
+      }
+      return super.remove(selector, callback, context);
+    }
+  }
+  
+  return RespreadGraph;
+};
+
+export { factoryRespreadGraph };</code></pre>
+        </article>
+    </section>
 
 
 

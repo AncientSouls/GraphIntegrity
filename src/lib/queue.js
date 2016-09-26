@@ -52,38 +52,46 @@ class QueueSpreading {
   
   /**
    * Reacts to insert a new path and reacts to update launched remove unspread, but spread still exists. This method triggers the first step of the second spread queue.
+   * If passed callback, then not be called mayBeEndedLaunched.
    * 
    * @param {PathGraph} pathGraph
    * @param {PathLink} pathLink
    * @param {string[]} pathLink.launched - ['spread']
+   * @param {Function} [callback]
    */
-  spreadByPath(pathGraph, pathLink) {
+  spreadByPath(pathGraph, pathLink, callback) {
     this.graphSpreading.spreadByPathLink(pathGraph, pathLink, { process: pathLink.id }, undefined, () => {
-      this.mayBeEndedLaunched(pathLink.id, 'spread');
+      if (callback) callback();
+      else this.mayBeEndedLaunched(pathLink.id, 'spread');
     });
   }
   
   /**
    * Reacts to remove path and reacts to update source or target in path. Then it launched two queues, unspread and spread. This method triggers the first step of the first unspread queue. After removal of unspread from launched from path, you need to start the second queue with method spreadByPath.
+   * If passed callback, then not be called mayBeEndedLaunched.
    * 
    * @param {PathGraph} pathGraph
    * @param {PathLink} pathLink
    * @param {string[]} pathLink.launched - ['unspread', 'spread']
+   * @param {Function} [callback]
    */
-  unspreadByPath(pathGraph, pathLink) {
+  unspreadByPath(pathGraph, pathLink, callback) {
     this.graphSpreading.unspreadByPathId(pathLink.id, { process: pathLink.id }, undefined, () => {
-      this.mayBeEndedLaunched(pathLink.id, 'unspread');
+      if (callback) callback();
+      else this.mayBeEndedLaunched(pathLink.id, 'unspread');
     });
   }
   
   /**
    * Reacts to insert new spread link. Link can be inserted with field process as step in queue or with field launched as start of queue.
+   * If passed callback, then not be called mayBeEndedLaunched.
    * 
    * @param {SpreadLink} spreadLink
    * @param {string[]} [pathLink.launched]
    * @param {string[]} [pathLink.process]
+   * @param {Function} [callback]
    */
-  spreadBySpread(spreadLink) {
+  spreadBySpread(spreadLink, callback) {
     var
       context = {},
       process = false
@@ -100,16 +108,19 @@ class QueueSpreading {
       if (process) {
         this.graphSpreading.spreadGraph.update(spreadLink.id, { process: { remove: context.process }});
       }
-      this.mayBeEndedLaunched(context.process, 'spread');
+      if (callback) callback();
+      else this.mayBeEndedLaunched(context.process, 'spread');
     });
   }
   
   /**
    * Reacts to remove spread link.
+   * If passed callback, then not be called mayBeEndedLaunched.
    * 
    * @param {SpreadLink} spreadLink
+   * @param {Function} [callback]
    */
-  unspreadBySpread(spreadLink) {
+  unspreadBySpread(spreadLink, callback) {
     var
       context = { process: {} },
       process = false,
@@ -128,39 +139,46 @@ class QueueSpreading {
       if (process) {
         this.graphSpreading.spreadGraph.removed.update(spreadLink.id, { process: { remove: context.process }});
       }
-      this.mayBeEndedLaunched(launched, 'unspread');
+      if (callback) callback();
+      else this.mayBeEndedLaunched(launched, 'unspread');
     });
   }
   
   /**
    * Reacts to insert a new spreader and reacts to update launched remove unspread, but spread still exists. This method triggers the first step of the second spread queue.
+   * If passed callback, then not be called mayBeEndedLaunched.
    * 
    * @param {SpreaderGraph} spreaderGraph
    * @param {SpreaderLink} spreaderLink
    * @param {string[]} spreaderLink.launched - ['spread']
+   * @param {Function} [callback]
    */
-  spreadBySpreader(spreaderGraph, spreaderLink) {
+  spreadBySpreader(spreaderGraph, spreaderLink, callback) {
     this.graphSpreading.spreadNewSpreadLink({
       [this.graphSpreading.spreadGraph.constantField]: spreaderLink[spreaderGraph.constantField],
       [this.graphSpreading.spreadGraph.variableField]: spreaderLink[spreaderGraph.variableField],
       spreader: spreaderLink.id
     }, { process: spreaderLink.id }, () => {
-      this.mayBeEndedLaunched(spreaderLink.id, 'spread');
+      if (callback) callback();
+      else this.mayBeEndedLaunched(spreaderLink.id, 'spread');
     });
   }
   
   /**
    * Reacts to remove spreader link and reacts to update source or target in spreader. Then it launched two queues, unspread and spread. This method triggers the first step of the first unspread queue. After removal of unspread from launched from spreader, you need to start the second queue with method spreadBySpreader.
+   * If passed callback, then not be called mayBeEndedLaunched.
    * 
    * @param {SpreaderGraph} spreaderGraph
    * @param {SpreaderLink} spreaderLink
    * @param {string[]} spreaderLink.launched - ['unspread', 'spread']
+   * @param {Function} [callback]
    */
-  unspreadBySpreader(spreaderGraph, spreaderLink) {
+  unspreadBySpreader(spreaderGraph, spreaderLink, callback) {
     this.graphSpreading.spreadGraph.remove({
       spreader: spreaderLink.id
     }, (error, count) => {
-      this.mayBeEndedLaunched(spreaderLink.id, 'unspread');
+      if (callback) callback();
+      else this.mayBeEndedLaunched(spreaderLink.id, 'unspread');
     }, { modifier: { process: { add: spreaderLink.id }}});
   }
 }

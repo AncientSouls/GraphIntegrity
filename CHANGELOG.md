@@ -1,4 +1,4 @@
-#### 0.0.7 (2016-9-24)
+#### 0.0.8 (2016-9-26)
 
 ##### Documentation Changes
 
@@ -6,6 +6,9 @@
 
 ##### New Features
 
+* **queue:**
+  * Callback support ([795e56c6](https://github.com/AncientSouls/GraphSpreading/commit/795e56c60c1bf1c411780af06a2992e17c36c84e))
+  * Removeв duplicate methods from queue ([1a27a350](https://github.com/AncientSouls/GraphSpreading/commit/1a27a3504fb8a9556f701c98d05545bee19531f0))
 * **launched:** Manager of field launched move out of Path and Spreader graph. ([11f82123](https://github.com/AncientSouls/GraphSpreading/commit/11f82123a61ea82bc0bde50f43addb7c35ec22bb))
 * **each:** Move each into custom async callbacks method in class. ([30a7653c](https://github.com/AncientSouls/GraphSpreading/commit/30a7653c8704dda963f554facc963d6f0849c08c))
 * **async:** universal each syntax ([b5e04dfe](https://github.com/AncientSouls/GraphSpreading/commit/b5e04dfee1b9f86bc2cb6d5a86578cd636d1a1b8))
@@ -26,4 +29,8 @@
 * **readme:** npm run compile already in npm test ([b935e5c5](https://github.com/AncientSouls/GraphSpreading/commit/b935e5c5a8af9c535c11908cb0fb17bdcd17785e))
 * **spreader:** Spread links handler without path fetching. ([7c024654](https://github.com/AncientSouls/GraphSpreading/commit/7c0246543aafdfcc45175aa62dad4032ea4e561f))
 * **ignore:** src/lib/tests ([81745402](https://github.com/AncientSouls/GraphSpreading/commit/8174540215e2d06c1fd9512f0bffb2e697f9e677))
+
+##### Refactors
+
+* **queue:** Rename mayBeEndedLaunched to removeFromLaunched ([f845211b](https://github.com/AncientSouls/GraphSpreading/commit/f845211b03dddc1136ba1a5accc51d62709891c4))
 

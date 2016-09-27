@@ -135,7 +135,7 @@ class QueueSpreading {
     } else {
       throw new Error('SpreadLink '+spreadLink.id+' should have `launched` or `process` field.');
     }
-    this.graphSpreading.unspreadFromunspreadBySpreadByPrevId(spreadLink.id, context, undefined, () => {
+    this.graphSpreading.unspreadFromRemovedSpreadLinkByPrevId(spreadLink.id, context, undefined, () => {
       if (process) {
         this.graphSpreading.spreadGraph.removed.update(spreadLink.id, { process: { remove: context.process }});
       }

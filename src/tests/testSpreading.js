@@ -156,7 +156,7 @@ export default function testGraphSpreading(generateGraphSpreading, ids) {
     });
   });
   
-  it('#unspreadFromunspreadBySpreadByPrevId', function(done) {
+  it('#unspreadFromRemovedSpreadLinkByPrevId', function(done) {
     var { pathGraph, spreadGraph, graphSpreading } = generateGraphSpreading();
     pathGraph.insert({ source: ids[1], target: ids[2] }, (error, pathLinkId0) => {
       pathGraph.insert({ source: ids[2], target: ids[3] }, (error, pathLinkId1) => {
@@ -164,7 +164,7 @@ export default function testGraphSpreading(generateGraphSpreading, ids) {
           spreadGraph.insert({ source: ids[0], target: ids[2], prev: spreadLinkId0, path: pathLinkId0, root: spreadLinkId0 }, (error, spreadLinkId1) => {
             spreadGraph.insert({ source: ids[0], target: ids[3], prev: spreadLinkId1, path: pathLinkId1, root: spreadLinkId0 }, (error, spreadLinkId2) => {
               spreadGraph.remove(spreadLinkId0, (error, count) => {
-                graphSpreading.unspreadFromunspreadBySpreadByPrevId(spreadLinkId0, (error, spreadLink1) => {
+                graphSpreading.unspreadFromRemovedSpreadLinkByPrevId(spreadLinkId0, (error, spreadLink1) => {
                   assert.ifError(error);
                 }, (error, count) => {
                   assert.ifError(error);

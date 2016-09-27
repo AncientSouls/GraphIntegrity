@@ -1,4 +1,4 @@
-#### 0.0.8 (2016-9-26)
+#### 0.0.9 (2016-9-27)
 
 ##### Documentation Changes
 
@@ -32,5 +32,6 @@
 
 ##### Refactors
 
+* **names:** Fix old renaming ([0a1c2e63](https://github.com/AncientSouls/GraphSpreading/commit/0a1c2e63effa807206c83f46cb2dd0d7d28af319))
 * **queue:** Rename mayBeEndedLaunched to removeFromLaunched ([f845211b](https://github.com/AncientSouls/GraphSpreading/commit/f845211b03dddc1136ba1a5accc51d62709891c4))
 

@@ -87,8 +87,6 @@ class QueueSpreading {
    * If passed callback, then not be called removeFromLaunched.
    * 
    * @param {SpreadLink} spreadLink
-   * @param {string[]} [pathLink.launched]
-   * @param {string[]} [pathLink.process]
    * @param {Function} [callback]
    */
   spreadBySpread(spreadLink, callback) {

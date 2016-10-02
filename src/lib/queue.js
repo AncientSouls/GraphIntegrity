@@ -100,7 +100,8 @@ class QueueSpreading {
     } else if (spreadLink.launched && typeof(spreadLink.launched[0]) == 'string') {
       context.process = spreadLink.id;
     } else {
-      throw new Error('SpreadLink should have `launched` or `process` field.');
+      if (callback) callback();
+      return; 
     }
     this.graphSpreading.spreadFromSpreadLink(spreadLink, context, undefined, () => {
       if (process) {
@@ -131,7 +132,8 @@ class QueueSpreading {
       context.process = spreadLink.id;
       launched = spreadLink.id;
     } else {
-      throw new Error('SpreadLink '+spreadLink.id+' should have `launched` or `process` field.');
+      if (callback) callback();
+      return;
     }
     this.graphSpreading.unspreadFromRemovedSpreadLinkByPrevId(spreadLink.id, context, undefined, () => {
       if (process) {

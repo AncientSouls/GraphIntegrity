@@ -1,7 +1,8 @@
-#### 0.0.9 (2016-9-27)
+#### 0.0.10 (2016-10-2)
 
 ##### Documentation Changes
 
+* **jsdoc:** fix params ([5f65b5ca](https://github.com/AncientSouls/GraphSpreading/commit/5f65b5ca0830aa6cb8926263486781035629a823))
 * **readme:** Compile before testing ([f6af1257](https://github.com/AncientSouls/GraphSpreading/commit/f6af1257d59115cc865d9ede8a37bf2dcdded055))
 
 ##### New Features
@@ -22,6 +23,7 @@
 
 ##### Bug Fixes
 
+* **errors:** Remove useless errors. ([5eb46fda](https://github.com/AncientSouls/GraphSpreading/commit/5eb46fdab83222772442dc954d1cd6db8fc59326))
 * **scripts:** useless ([66d08c1e](https://github.com/AncientSouls/GraphSpreading/commit/66d08c1e24a1f13dc76ac4d7519ac0044f59e04f))
 * **async:** Move callback from push to drain ([9385fa0a](https://github.com/AncientSouls/GraphSpreading/commit/9385fa0a9e9554c578fd5d9daa1844e8b6008ddb))
 * **spreading:** Wrong field name ([befd9659](https://github.com/AncientSouls/GraphSpreading/commit/befd9659d8779040c7bf95b23f18b043b63cd173))

@@ -373,15 +373,17 @@ class GraphSpreading {
    
   spreadTo(id, context, handler, callback) {
     this.each(this.pathGraphs, (pathGraph, nextPathGraph) => {
-      pathGraph.fetch({
-        [pathGraph.toFields[0]]: id
-      }, undefined, (error, pathLinks) => {
-        this.each(pathLinks, (pathLink, nextPathLink) => {
-          this.spreadByPathLink(pathGraph, pathLink, context, handler, nextPathLink);
-        }, function(error) {
-          nextPathGraph();
+      this.each(pathGraph.toFields, (toField, nextToField) => {
+        pathGraph.fetch({
+          [toField]: id
+        }, undefined, (error, pathLinks) => {
+          this.each(pathLinks, (pathLink, nextPathLink) => {
+            this.spreadByPathLink(pathGraph, pathLink, context, handler, nextPathLink);
+          }, function(error) {
+            nextToField();
+          });
         });
-      });
+      }, nextPathGraph);
     }, () => {
       if (callback) callback();
     });

@@ -1,4 +1,4 @@
-#### 0.0.10 (2016-10-2)
+#### 0.0.11 (2016-11-30)
 
 ##### Documentation Changes
 
@@ -7,6 +7,8 @@
 
 ##### New Features
 
+* **queryWrapper:** #8 context.wrapSpreadQuery and context.wrapPathQuery ([8a2f5354](https://github.com/AncientSouls/GraphSpreading/commit/8a2f535409dc1608d387239af60bac53017c19cd))
+* **context:** #7 Support for context fromFields and toFields ([9d40f083](https://github.com/AncientSouls/GraphSpreading/commit/9d40f08380fd5f27b77c3b1102e792a6cce9c6c1))
 * **queue:**
   * Callback support ([795e56c6](https://github.com/AncientSouls/GraphSpreading/commit/795e56c60c1bf1c411780af06a2992e17c36c84e))
   * Removeв duplicate methods from queue ([1a27a350](https://github.com/AncientSouls/GraphSpreading/commit/1a27a3504fb8a9556f701c98d05545bee19531f0))
@@ -23,10 +25,12 @@
 
 ##### Bug Fixes
 
+* **spreading:**
+  * spreadTo support for toFields array, not just first of all... ([7301f7e5](https://github.com/AncientSouls/GraphSpreading/commit/7301f7e543fb71295cbad19f1813276fea888fba))
+  * Wrong field name ([befd9659](https://github.com/AncientSouls/GraphSpreading/commit/befd9659d8779040c7bf95b23f18b043b63cd173))
 * **errors:** Remove useless errors. ([5eb46fda](https://github.com/AncientSouls/GraphSpreading/commit/5eb46fdab83222772442dc954d1cd6db8fc59326))
 * **scripts:** useless ([66d08c1e](https://github.com/AncientSouls/GraphSpreading/commit/66d08c1e24a1f13dc76ac4d7519ac0044f59e04f))
 * **async:** Move callback from push to drain ([9385fa0a](https://github.com/AncientSouls/GraphSpreading/commit/9385fa0a9e9554c578fd5d9daa1844e8b6008ddb))
-* **spreading:** Wrong field name ([befd9659](https://github.com/AncientSouls/GraphSpreading/commit/befd9659d8779040c7bf95b23f18b043b63cd173))
 * **package:** Not need to compile after install ([fc4c20f0](https://github.com/AncientSouls/GraphSpreading/commit/fc4c20f0cae3604ed305c0a5bdc511b420645d04))
 * **readme:** npm run compile already in npm test ([b935e5c5](https://github.com/AncientSouls/GraphSpreading/commit/b935e5c5a8af9c535c11908cb0fb17bdcd17785e))
 * **spreader:** Spread links handler without path fetching. ([7c024654](https://github.com/AncientSouls/GraphSpreading/commit/7c0246543aafdfcc45175aa62dad4032ea4e561f))

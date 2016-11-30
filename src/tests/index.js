@@ -73,7 +73,8 @@ describe('AncientSouls/GraphSpreading', function() {
     
     var pathGraph = new ExistedPathGraph([], {
         id: 'id', source: 'source', target: 'target',
-        removed: 'removed', launched: 'launched', process: 'process'
+        removed: 'removed', launched: 'launched', process: 'process',
+        type: 'type',
     }, { name: 'path', fromFields: ['source'], toFields: ['target'] });
     
     pathGraph.removed = new NonExistedPathGraph(

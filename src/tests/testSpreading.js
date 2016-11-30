@@ -215,7 +215,7 @@ export default function testGraphSpreading(generateGraphSpreading, ids) {
     });
   });
 
-  it('should context override graph fromField and toField', function(done) {
+  it('context.fromField context.toField', function(done) {
     var { pathGraph, spreadGraph, graphSpreading } = generateGraphSpreading();
     pathGraph.insert({ source: ids[0], target: ids[1] }, (error, pathLinkId0) => {
       spreadGraph.insert({ source: ids[5], target: ids[1] }, (error, spreadLinkId0) => {
@@ -224,6 +224,30 @@ export default function testGraphSpreading(generateGraphSpreading, ids) {
             assert.ifError(error);
             assert.lengthOf(spreadLinks, 3);
             done();
+          });
+        });
+      });
+    });
+  });
+
+  it('context.wrapPathQuery', function(done) {
+    var { pathGraph, spreadGraph, graphSpreading } = generateGraphSpreading();
+    pathGraph.insert({ source: ids[0], target: ids[1], type: 'a' }, (error, pathLinkId0) => {
+      pathGraph.insert({ source: ids[0], target: ids[1], type: 'b' }, (error, pathLinkId1) => {
+        spreadGraph.insert({ source: ids[5], target: ids[1] }, (error, spreadLinkId0) => {
+          graphSpreading.spreadTo(ids[0], {
+            fromFields: ['target'],
+            toFields: ['source'],
+            wrapPathQuery(query) {
+              query.type = 'b';
+            },
+          }, undefined, () => {
+            spreadGraph.fetch({ source: ids[5], target: ids[0] }, undefined, (error, spreadLinks) => {
+              assert.ifError(error);
+              assert.lengthOf(spreadLinks, 1);
+              assert.equal(spreadLinks[0].path, pathLinkId1);
+              done();
+            });
           });
         });
       });

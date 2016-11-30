@@ -41,13 +41,18 @@ class GraphSpreading {
    * @param {PathGraph} pathGraph
    * @param {PathLink} pathLink
    * @param {Object} [context]
+   * @param {Function} [context.wrapSpreadQuery]
    * @param {GraphSpreading~spreadFromSpreadLinkByPathLinkCallback} [handler]
    * @param {GraphSpreading~spreadByPathLinkCallback} [callback]
    */
   _spreadByPathLink(fromField, pathGraph, pathLink, context, handler, callback) {
-    this.spreadGraph.fetch({
-      [this.spreadGraph.variableField]: pathLink[fromField]
-    }, undefined, (error, spreadLinks) => {
+    var query = {
+      [this.spreadGraph.variableField]: pathLink[fromField],
+    };
+    if (context && context.wrapSpreadQuery) {
+      context.wrapSpreadQuery(query);
+    }
+    this.spreadGraph.fetch(query, undefined, (error, spreadLinks) => {
       if (spreadLinks.length) {
         this.each(spreadLinks, (spreadLink, next) => {
           this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, handler, () => { next(); });
@@ -122,13 +127,19 @@ class GraphSpreading {
    * @param {string} fromField
    * @param {SpreadLink} spreadLink
    * @param {PathGraph} pathGraph
+   * @param {Object} [context]
+   * @param {Function} [context.wrapPathQuery]
    * @param {GraphSpreading~spreadFromSpreadLinkByPathGraphHandler} [handler]
    * @param {GraphSpreading~spreadFromSpreadLinkByPathGraphCallback} [callback]
    */
   _spreadFromSpreadLinkByPathGraph(fromField, spreadLink, pathGraph, context, handler, callback) {
-    pathGraph.fetch({
-      [fromField]: spreadLink[this.spreadGraph.variableField]
-    }, undefined, (error, pathLinks) => {
+    var query = {
+      [fromField]: spreadLink[this.spreadGraph.variableField],
+    };
+    if (context && context.wrapPathQuery) {
+      context.wrapPathQuery(query);
+    }
+    pathGraph.fetch(query, undefined, (error, pathLinks) => {
       this.each(pathLinks, (pathLink, next) => {
         this.spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, handler, next);
       }, () => {
@@ -238,12 +249,19 @@ class GraphSpreading {
    * 
    * @param {string} spreadLinkId
    * @param {Object} [context]
+   * @param {Function} [context.wrapSpreadQuery]
    * @param {GraphSpreading~unspreadFromRemovedSpreadLinkByPrevIdHandler} [handler]
    * @param {GraphSpreading~unspreadFromRemovedSpreadLinkByPrevIdCallback} [callback]
    */
   unspreadFromRemovedSpreadLinkByPrevId(spreadLinkId, context, handler, callback) {
+    var query = {
+      prev: spreadLinkId,
+    };
+    if (context && context.wrapSpreadQuery) {
+      context.wrapSpreadQuery(query);
+    }
     if (handler) {
-      this.spreadGraph.fetch({ prev: spreadLinkId }, undefined, (error, spreadLinks) => {
+      this.spreadGraph.fetch(query, undefined, (error, spreadLinks) => {
         if (error) {
           if (callback) callback(error);
         } else {
@@ -258,7 +276,7 @@ class GraphSpreading {
         }
       });
     } else {
-      this.spreadGraph.remove({ prev: spreadLinkId }, callback, context);
+      this.spreadGraph.remove(query, callback, context);
     }
   }
   
@@ -283,12 +301,19 @@ class GraphSpreading {
    * 
    * @param {string} pathLinkId
    * @param {Object} [context]
+   * @param {Function} [context.wrapSpreadQuery]
    * @param {GraphSpreading~unspreadByPathIdHandler} [handler]
    * @param {GraphSpreading~unspreadByPathIdCallback} [callback]
    */
   unspreadByPathId(pathLinkId, context, handler, callback) {
+    var query = {
+      path: pathLinkId,
+    };
+    if (context && context.wrapSpreadQuery) {
+      context.wrapSpreadQuery(query);
+    }
     if (handler) {
-      this.spreadGraph.fetch({ path: pathLinkId }, undefined, (error, spreadLinks) => {
+      this.spreadGraph.fetch(query, undefined, (error, spreadLinks) => {
         if (error) {
           if (callback) callback(error);
         } else {
@@ -303,7 +328,7 @@ class GraphSpreading {
         }
       });
     } else {
-      this.spreadGraph.remove({ path: pathLinkId }, callback, context);
+      this.spreadGraph.remove(query, callback, context);
     }
   }
   
@@ -328,28 +353,35 @@ class GraphSpreading {
    * 
    * @param {string} id
    * @param {Object} [context]
+   * @param {Function} [context.wrapSpreadQuery]
    * @param {GraphSpreading~unspreadToHandler} [handler]
    * @param {GraphSpreading~unspreadToCallback} [callback]
    */
   unspread(id, context, handler, callback) {
-     this.spreadGraph.fetch({ [this.spreadGraph.variableField]: id }, undefined, (error, spreadLinks) => {
-       if (error) {
-         if (callback) callback(error);
-       } else {
-          this.each(spreadLinks, (spreadLink, next) => {
-           this.spreadGraph._unspreadingHandler(spreadLink, context, (permission) => {
-             if (permission) {
-               this.spreadGraph.remove(spreadLink.id, (error, count) => {
-                 if (handler) handler(error, spreadLink);
-                 next();
-               }, context);
-             }
-           });
-          }, () => {
-            if (callback) callback(undefined, spreadLinks.length);
+    var query = {
+      [this.spreadGraph.variableField]: id,
+    };
+    if (context && context.wrapSpreadQuery) {
+      context.wrapSpreadQuery(query);
+    }
+    this.spreadGraph.fetch(query, undefined, (error, spreadLinks) => {
+      if (error) {
+        if (callback) callback(error);
+      } else {
+        this.each(spreadLinks, (spreadLink, next) => {
+          this.spreadGraph._unspreadingHandler(spreadLink, context, (permission) => {
+            if (permission) {
+              this.spreadGraph.remove(spreadLink.id, (error, count) => {
+                if (handler) handler(error, spreadLink);
+                next();
+              }, context);
+            }
           });
-       }
-     });
+        }, () => {
+          if (callback) callback(undefined, spreadLinks.length);
+        });
+      }
+    });
   }
   
   /**
@@ -372,6 +404,7 @@ class GraphSpreading {
    * @param {string} id
    * @param {Object} [context]
    * @param {String[]} [context.toFields]
+   * @param {Function} [context.wrapPathQuery]
    * @param {GraphSpreading~spreadToHandler} [handler]
    * @param {GraphSpreading~spreadToCallback} [callback]
    */
@@ -380,9 +413,13 @@ class GraphSpreading {
     this.each(this.pathGraphs, (pathGraph, nextPathGraph) => {
       var toFields = context&&context.toFields||pathGraph.toFields;
       this.each(toFields, (toField, nextToField) => {
-        pathGraph.fetch({
-          [toField]: id
-        }, undefined, (error, pathLinks) => {
+        var query = {
+          [toField]: id,
+        };
+        if (context && context.wrapPathQuery) {
+          context.wrapPathQuery(query);
+        }
+        pathGraph.fetch(query, undefined, (error, pathLinks) => {
           this.each(pathLinks, (pathLink, nextPathLink) => {
             this.spreadByPathLink(pathGraph, pathLink, context, handler, nextPathLink);
           }, function(error) {

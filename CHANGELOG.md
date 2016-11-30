@@ -1,4 +1,4 @@
-#### 0.0.11 (2016-11-30)
+#### 0.0.12 (2016-11-30)
 
 ##### Documentation Changes
 
@@ -7,6 +7,7 @@
 
 ##### New Features
 
+* **class:** #7 #8 Empruve last two commits to class-method logic. ([6deafada](https://github.com/AncientSouls/GraphSpreading/commit/6deafadad832e1ff6ac920e0e8f72c0f5675056b))
 * **queryWrapper:** #8 context.wrapSpreadQuery and context.wrapPathQuery ([8a2f5354](https://github.com/AncientSouls/GraphSpreading/commit/8a2f535409dc1608d387239af60bac53017c19cd))
 * **context:** #7 Support for context fromFields and toFields ([9d40f083](https://github.com/AncientSouls/GraphSpreading/commit/9d40f08380fd5f27b77c3b1102e792a6cce9c6c1))
 * **queue:**

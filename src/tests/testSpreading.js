@@ -216,10 +216,14 @@ export default function testGraphSpreading(generateGraphSpreading, ids) {
   });
 
   it('context.fromField context.toField', function(done) {
-    var { pathGraph, spreadGraph, graphSpreading } = generateGraphSpreading();
+    var { pathGraph, spreadGraph, graphSpreading } = generateGraphSpreading(
+      undefined, undefined,
+      () => { return ['target']; },
+      () => { return ['source', 'id']; }
+    );
     pathGraph.insert({ source: ids[0], target: ids[1] }, (error, pathLinkId0) => {
       spreadGraph.insert({ source: ids[5], target: ids[1] }, (error, spreadLinkId0) => {
-        graphSpreading.spreadTo(ids[0], { fromFields: ['target'], toFields: ['source', 'id'], }, undefined, () => {
+        graphSpreading.spreadTo(ids[0], undefined, undefined, () => {
           spreadGraph.fetch({ source: ids[5] }, undefined, (error, spreadLinks) => {
             assert.ifError(error);
             assert.lengthOf(spreadLinks, 3);
@@ -231,17 +235,18 @@ export default function testGraphSpreading(generateGraphSpreading, ids) {
   });
 
   it('context.wrapPathQuery', function(done) {
-    var { pathGraph, spreadGraph, graphSpreading } = generateGraphSpreading();
+    var { pathGraph, spreadGraph, graphSpreading } = generateGraphSpreading(
+      undefined,
+      (query, pathGraph, fromField, toField, context) => {
+        query.type = 'b';
+      },
+      () => { return ['target']; },
+      () => { return ['source']; }
+    );
     pathGraph.insert({ source: ids[0], target: ids[1], type: 'a' }, (error, pathLinkId0) => {
       pathGraph.insert({ source: ids[0], target: ids[1], type: 'b' }, (error, pathLinkId1) => {
         spreadGraph.insert({ source: ids[5], target: ids[1] }, (error, spreadLinkId0) => {
-          graphSpreading.spreadTo(ids[0], {
-            fromFields: ['target'],
-            toFields: ['source'],
-            wrapPathQuery(query) {
-              query.type = 'b';
-            },
-          }, undefined, () => {
+          graphSpreading.spreadTo(ids[0], undefined, undefined, () => {
             spreadGraph.fetch({ source: ids[5], target: ids[0] }, undefined, (error, spreadLinks) => {
               assert.ifError(error);
               assert.lengthOf(spreadLinks, 1);

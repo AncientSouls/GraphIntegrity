@@ -16,7 +16,7 @@ import testQueue from './testQueue.js';
 import testSpreader from './testSpreader.js';
 
 describe('AncientSouls/GraphSpreading', function() {
-  function generateGraphSpreading() {
+  function generateGraphSpreading(_wrapSpreadQuery, _wrapPathQuery, _getFromFields, _getToFields) {
     
     // Unique id between graphs
 
@@ -95,7 +95,28 @@ describe('AncientSouls/GraphSpreading', function() {
     
     // GraphSpreading instance
     
-    var graphSpreading = new GraphSpreading(spreadGraph);
+    var CustomGraphSpreading = (() => {
+      class CustomGraphSpreading extends GraphSpreading {
+        _wrapSpreadQuery(...args) {
+          if (_wrapSpreadQuery) _wrapSpreadQuery.call(this, ...args);
+        }
+        _wrapPathQuery(...args) {
+          if (_wrapPathQuery) _wrapPathQuery.call(this, ...args);
+        }
+        _getFromFields(...args) {
+          if (_getFromFields) return _getFromFields.call(this, ...args);
+          else return super._getFromFields.call(this, ...args);
+        }
+        _getToFields(...args) {
+          if (_getToFields) return _getToFields.call(this, ...args);
+          else return super._getToFields.call(this, ...args);
+        }
+      }
+
+      return CustomGraphSpreading;
+    })();
+
+    var graphSpreading = new CustomGraphSpreading(spreadGraph);
     graphSpreading.addPathGraph(pathGraph);
     
     // QueueSpreading id parser

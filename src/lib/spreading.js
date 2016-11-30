@@ -66,11 +66,13 @@ class GraphSpreading {
    * @param {PathGraph} pathGraph
    * @param {PathLink} pathLink
    * @param {Object} [context]
+   * @param {String[]} [context.fromFields]
    * @param {GraphSpreading~spreadFromSpreadLinkByPathLinkCallback} [handler]
    * @param {GraphSpreading~spreadByPathLinkCallback} [callback]
    */
   spreadByPathLink(pathGraph, pathLink, context, handler, callback) {
-    this.each(pathGraph.fromFields, (fromField, next) => {
+    var fromFields = context&&context.fromFields||pathGraph.fromFields;
+    this.each(fromFields, (fromField, next) => {
       this._spreadByPathLink(fromField, pathGraph, pathLink, context, handler, next);
     }, callback);
   }
@@ -200,11 +202,13 @@ class GraphSpreading {
    * @param {PathGraph} pathGraph
    * @param {PathLink} pathLink
    * @param {Object} [context]
+   * @param {String[]} [context.toFields]
    * @param {GraphSpreading~spreadFromSpreadLinkByPathLinkHandler} [handler]
    * @param {GraphSpreading~spreadFromSpreadLinkByPathLinkCallback} [callback]
    */
   spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, handler, callback) {
-    this.each(pathGraph.toFields, (toField, next) => {
+    var toFields = context&&context.toFields||pathGraph.toFields;
+    this.each(toFields, (toField, next) => {
       this._spreadFromSpreadLinkByPathLink(toField, spreadLink, pathGraph, pathLink, context, (error, id, prev, pathGraph, pathLink) => {
         if (handler) handler(error, id, prev, pathGraph, pathLink);
         next();
@@ -367,13 +371,15 @@ class GraphSpreading {
    * 
    * @param {string} id
    * @param {Object} [context]
+   * @param {String[]} [context.toFields]
    * @param {GraphSpreading~spreadToHandler} [handler]
    * @param {GraphSpreading~spreadToCallback} [callback]
    */
    
   spreadTo(id, context, handler, callback) {
     this.each(this.pathGraphs, (pathGraph, nextPathGraph) => {
-      this.each(pathGraph.toFields, (toField, nextToField) => {
+      var toFields = context&&context.toFields||pathGraph.toFields;
+      this.each(toFields, (toField, nextToField) => {
         pathGraph.fetch({
           [toField]: id
         }, undefined, (error, pathLinks) => {

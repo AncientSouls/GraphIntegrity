@@ -29,28 +29,6 @@ function factoryPathGraph(ParentClassGraph) {
       if (config.toFields) {
         this.toFields = config.toFields;
       } else throw new Error('config.toFields is not defined');
-      
-      if (!this.fromFields.length) {
-        throw new Error('config.fromFields can not be empty');
-      }
-      
-      if (!this.toFields.length) {
-        throw new Error('config.fromFields can not be empty');
-      }
-      
-      for (var fr in this.fromFields) {
-        if (AllowedFields.indexOf(this.fromFields[fr]) == -1) {
-          throw new Error('config.fromFields may includes only `sourec`, `target` and `id`, but '+this.toFields[to]);
-        }
-        for (var to in this.toFields) {
-          if (AllowedFields.indexOf(this.toFields[to]) == -1) {
-            throw new Error('config.toFields may includes only `sourec`, `target` and `id`, but '+this.toFields[to]);
-          }
-          if (this.fromFields[fr] == this.toFields[to]) {
-            throw new Error('The start and end of the path con not be at one reference of the link.');
-          }
-        }
-      }
     }
   }
   

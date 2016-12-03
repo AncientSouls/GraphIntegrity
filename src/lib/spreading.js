@@ -57,10 +57,11 @@ class GraphSpreading {
    * Custom getter of possible from fields.
    * 
    * @param {Object} [pathGraph]
+   * @param {Object} [pathLink]
    * @param {Object} [spreadLink]
    * @return {String[]} [fromFields]
    */
-  _getFromFields(pathGraph, spreadLink) {
+  _getFromFields(pathGraph, pathLink, spreadLink) {
     return pathGraph.fromFields;
   }
 
@@ -68,10 +69,11 @@ class GraphSpreading {
    * Custom getter of possible to fields.
    * 
    * @param {Object} [pathGraph]
+   * @param {Object} [pathLink]
    * @param {Object} [spreadLink]
    * @return {String[]} [toFields]
    */
-  _getToFields(pathGraph, spreadLink) {
+  _getToFields(pathGraph, pathLink, spreadLink) {
     return pathGraph.toFields;
   }
   
@@ -113,7 +115,7 @@ class GraphSpreading {
    * @param {GraphSpreading~spreadByPathLinkCallback} [callback]
    */
   spreadByPathLink(pathGraph, pathLink, context, handler, callback) {
-    this.each(this._getFromFields(pathGraph), (fromField, next) => {
+    this.each(this._getFromFields(pathGraph, pathLink), (fromField, next) => {
       this._spreadByPathLink(fromField, pathGraph, pathLink, context, handler, next);
     }, callback);
   }
@@ -190,7 +192,7 @@ class GraphSpreading {
    * @param {GraphSpreading~spreadFromSpreadLinkByPathGraphCallback} [callback]
    */
   spreadFromSpreadLinkByPathGraph(spreadLink, pathGraph, context, handler, callback) {
-    this.each(this._getFromFields(pathGraph, spreadLink), (fromField, next) => {
+    this.each(this._getFromFields(pathGraph, undefined, spreadLink), (fromField, next) => {
       this._spreadFromSpreadLinkByPathGraph(fromField, spreadLink, pathGraph, context, handler, next);
     }, callback);
   }
@@ -250,7 +252,7 @@ class GraphSpreading {
    * @param {GraphSpreading~spreadFromSpreadLinkByPathLinkCallback} [callback]
    */
   spreadFromSpreadLinkByPathLink(spreadLink, pathGraph, pathLink, context, handler, callback) {
-    this.each(this._getToFields(pathGraph, spreadLink), (toField, next) => {
+    this.each(this._getToFields(pathGraph, pathLink, spreadLink), (toField, next) => {
       this._spreadFromSpreadLinkByPathLink(toField, spreadLink, pathGraph, pathLink, context, (error, id, prev, pathGraph, pathLink) => {
         if (handler) handler(error, id, prev, pathGraph, pathLink);
         next();

@@ -1,4 +1,4 @@
-#### 0.0.12 (2016-11-30)
+#### 0.0.13 (2016-12-3)
 
 ##### Documentation Changes
 
@@ -27,6 +27,7 @@
 ##### Bug Fixes
 
 * **spreading:**
+  * Support for pathLink in _getToFields and _getFromFields. ([c04a122e](https://github.com/AncientSouls/GraphSpreading/commit/c04a122ed80a9e1398afa06fb0c74abdc4aba707))
   * spreadTo support for toFields array, not just first of all... ([7301f7e5](https://github.com/AncientSouls/GraphSpreading/commit/7301f7e543fb71295cbad19f1813276fea888fba))
   * Wrong field name ([befd9659](https://github.com/AncientSouls/GraphSpreading/commit/befd9659d8779040c7bf95b23f18b043b63cd173))
 * **errors:** Remove useless errors. ([5eb46fda](https://github.com/AncientSouls/GraphSpreading/commit/5eb46fdab83222772442dc954d1cd6db8fc59326))

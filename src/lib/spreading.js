@@ -89,7 +89,7 @@ class GraphSpreading {
    */
   _spreadByPathLink(fromField, pathGraph, pathLink, context, handler, callback) {
     var query = {
-      [this.spreadGraph.variableField]: pathLink[fromField],
+      [this.spreadGraph.config.aliases[this.spreadGraph.variableField]]: pathLink[pathGraph.config.aliases[fromField]],
     };
     this._wrapSpreadQuery(query, context);
     this.spreadGraph.fetch(query, undefined, (error, spreadLinks) => {
@@ -171,7 +171,7 @@ class GraphSpreading {
    */
   _spreadFromSpreadLinkByPathGraph(fromField, spreadLink, pathGraph, context, handler, callback) {
     var query = {
-      [fromField]: spreadLink[this.spreadGraph.variableField],
+      [pathGraph.config.aliases[fromField]]: spreadLink[this.spreadGraph.variableField],
     };
     this._wrapPathQuery(query, pathGraph, fromField, undefined, context);
     pathGraph.fetch(query, undefined, (error, pathLinks) => {
@@ -225,11 +225,11 @@ class GraphSpreading {
    */
   _spreadFromSpreadLinkByPathLink(toField, spreadLink, pathGraph, pathLink, context, callback) {
     this.spreadGraph._spreadingHandler(spreadLink, pathGraph, pathLink, {
-      [this.spreadGraph.constantField]: spreadLink[this.spreadGraph.constantField],
-      [this.spreadGraph.variableField]: pathLink[toField],
-      prev: spreadLink.id,
-      path: pathLink.id,
-      root: spreadLink.root?spreadLink.root:spreadLink.id
+      [this.spreadGraph.config.aliases[this.spreadGraph.constantField]]: spreadLink[this.spreadGraph.config.aliases[this.spreadGraph.constantField]],
+      [this.spreadGraph.config.aliases[this.spreadGraph.variableField]]: pathLink[pathGraph.config.aliases[toField]],
+      [this.spreadGraph.config.aliases.prev]: spreadLink[this.spreadGraph.config.aliases.id],
+      [this.spreadGraph.config.aliases.path]: pathLink[pathGraph.config.aliases.id],
+      [this.spreadGraph.config.aliases.root]: spreadLink[this.spreadGraph.config.aliases.root]?spreadLink[this.spreadGraph.config.aliases.root]:spreadLink[this.spreadGraph.config.aliases.id]
     }, context, (newSpreadLink) => {
       if (newSpreadLink) {
         this.spreadGraph.insert(newSpreadLink, (error, id) => {
@@ -287,7 +287,7 @@ class GraphSpreading {
    */
   unspreadFromRemovedSpreadLinkByPrevId(spreadLinkId, context, handler, callback) {
     var query = {
-      prev: spreadLinkId,
+      [this.spreadGraph.config.aliases.prev]: spreadLinkId,
     };
     this._wrapSpreadQuery(query, context);
     if (handler) {
@@ -296,7 +296,7 @@ class GraphSpreading {
           if (callback) callback(error);
         } else {
           this.each(spreadLinks, (spreadLink, next) => {
-            this.spreadGraph.remove(spreadLink.id, (error, count) => {
+            this.spreadGraph.remove(spreadLink[this.spreadGraph.config.aliases.id], (error, count) => {
               handler(error, spreadLink);
               next();
             }, context);
@@ -336,7 +336,7 @@ class GraphSpreading {
    */
   unspreadByPathId(pathLinkId, context, handler, callback) {
     var query = {
-      path: pathLinkId,
+      [this.spreadGraph.config.aliases.path]: pathLinkId,
     };
     this._wrapSpreadQuery(query, context);
     if (handler) {
@@ -345,7 +345,7 @@ class GraphSpreading {
           if (callback) callback(error);
         } else {
           this.each(spreadLinks, (spreadLink, next) => {
-            this.spreadGraph.remove(spreadLink.id, (error, count) => {
+            this.spreadGraph.remove(spreadLink[this.spreadGraph.config.aliases.id], (error, count) => {
               handler(error, spreadLink);
               next();
             }, context);
@@ -385,7 +385,7 @@ class GraphSpreading {
    */
   unspread(id, context, handler, callback) {
     var query = {
-      [this.spreadGraph.variableField]: id,
+      [this.spreadGraph.config.aliases[this.spreadGraph.variableField]]: id,
     };
     this._wrapSpreadQuery(query, context);
     this.spreadGraph.fetch(query, undefined, (error, spreadLinks) => {
@@ -395,7 +395,7 @@ class GraphSpreading {
         this.each(spreadLinks, (spreadLink, next) => {
           this.spreadGraph._unspreadingHandler(spreadLink, context, (permission) => {
             if (permission) {
-              this.spreadGraph.remove(spreadLink.id, (error, count) => {
+              this.spreadGraph.remove(spreadLink[this.spreadGraph.config.aliases.id], (error, count) => {
                 if (handler) handler(error, spreadLink);
                 next();
               }, context);
@@ -435,7 +435,7 @@ class GraphSpreading {
     this.each(this.pathGraphs, (pathGraph, nextPathGraph) => {
       this.each(this._getToFields(pathGraph), (toField, nextToField) => {
         var query = {
-          [toField]: id,
+          [this.spreadGraph.config.aliases[toField]]: id,
         };
         this._wrapPathQuery(query, pathGraph, undefined, toField, context);
         pathGraph.fetch(query, undefined, (error, pathLinks) => {

@@ -34,13 +34,13 @@ class QueueSpreading {
    */
   removeFromLaunched(launchedLinkId, launchedToRemove) {
     var launchedGraph = this._getGraph(launchedLinkId);
-    this.graphSpreading.spreadGraph.count({ process: launchedLinkId }, undefined, (error, count) => {
+    this.graphSpreading.spreadGraph.count({ [this.graphSpreading.spreadGraph.config.aliases.process]: launchedLinkId }, undefined, (error, count) => {
       if (!count) {
-        launchedGraph.update({ id: launchedLinkId, launched: launchedToRemove }, { launched: { remove: launchedToRemove }}, (error, count) => {
+        launchedGraph.update({ [launchedGraph.config.aliases.id]: launchedLinkId, [launchedGraph.config.aliases.launched]: launchedToRemove }, { [launchedGraph.config.aliases.launched]: { remove: launchedToRemove }}, (error, count) => {
           if (error) throw error;
           if (!count) {
             if(launchedGraph.removed) {
-              launchedGraph.removed.update({ id: launchedLinkId, launched: launchedToRemove }, { launched: { remove: launchedToRemove }}, (error, count) => {
+              launchedGraph.removed.update({ [launchedGraph.removed.config.aliases.id]: launchedLinkId, [launchedGraph.removed.config.aliases.launched]: launchedToRemove }, { [this.graphSpreading.spreadGraph.config.aliases.launched]: { remove: launchedToRemove }}, (error, count) => {
                 if (error) throw error;
               });
             }
@@ -60,9 +60,9 @@ class QueueSpreading {
    * @param {Function} [callback]
    */
   spreadByPath(pathGraph, pathLink, callback) {
-    this.graphSpreading.spreadByPathLink(pathGraph, pathLink, { process: pathLink.id }, undefined, () => {
+    this.graphSpreading.spreadByPathLink(pathGraph, pathLink, { [this.graphSpreading.spreadGraph.config.aliases.process]: pathLink[pathGraph.config.aliases.id] }, undefined, () => {
       if (callback) callback();
-      else this.removeFromLaunched(pathLink.id, 'spread');
+      else this.removeFromLaunched(pathLink[pathGraph.config.aliases.id], 'spread');
     });
   }
   
@@ -76,9 +76,9 @@ class QueueSpreading {
    * @param {Function} [callback]
    */
   unspreadByPath(pathGraph, pathLink, callback) {
-    this.graphSpreading.unspreadByPathId(pathLink.id, { process: pathLink.id }, undefined, () => {
+    this.graphSpreading.unspreadByPathId(pathLink[pathGraph.config.aliases.id], { [pathGraph.config.aliases.process]: pathLink.id }, undefined, () => {
       if (callback) callback();
-      else this.removeFromLaunched(pathLink.id, 'unspread');
+      else this.removeFromLaunched(pathLink[pathGraph.config.aliases.id], 'unspread');
     });
   }
   
@@ -94,18 +94,18 @@ class QueueSpreading {
       context = {},
       process = false
     ;
-    if (spreadLink.process && typeof(spreadLink.process[0]) == 'string') {
-       context.process = spreadLink.process[0];
+    if (spreadLink[this.graphSpreading.spreadGraph.config.aliases.process] && typeof(spreadLink[this.graphSpreading.spreadGraph.config.aliases.process][0]) == 'string') {
+       context[this.graphSpreading.spreadGraph.config.aliases.process] = spreadLink[this.graphSpreading.spreadGraph.config.aliases.process][0];
        process = true;
-    } else if (spreadLink.launched && typeof(spreadLink.launched[0]) == 'string') {
-      context.process = spreadLink.id;
+    } else if (spreadLink[this.graphSpreading.spreadGraph.config.aliases.launched] && typeof(spreadLink[this.graphSpreading.spreadGraph.config.aliases.launched][0]) == 'string') {
+      context[this.graphSpreading.spreadGraph.config.aliases.process] = spreadLink[this.graphSpreading.spreadGraph.config.aliases.id];
     } else {
       if (callback) callback();
       return; 
     }
     this.graphSpreading.spreadFromSpreadLink(spreadLink, context, undefined, () => {
       if (process) {
-        this.graphSpreading.spreadGraph.update(spreadLink.id, { process: { remove: context.process }});
+        this.graphSpreading.spreadGraph.update(spreadLink[this.graphSpreading.spreadGraph.config.aliases.id], { [this.graphSpreading.spreadGraph.config.aliases.process]: { remove: context[this.graphSpreading.spreadGraph.config.aliases.process] }});
       }
       if (callback) callback();
       else this.removeFromLaunched(context.process, 'spread');
@@ -121,23 +121,23 @@ class QueueSpreading {
    */
   unspreadBySpread(spreadLink, callback) {
     var
-      context = { process: {} },
+      context = { [this.graphSpreading.spreadGraph.config.aliases.process]: {} },
       process = false,
       launched = false
     ;
-    if (spreadLink.process && typeof(spreadLink.process[0]) == 'string') {
-       context.process = spreadLink.process[0];
-       launched = process = context.process;
-    } else if (spreadLink.launched && typeof(spreadLink.launched[0]) == 'string') {
-      context.process = spreadLink.id;
-      launched = spreadLink.id;
+    if (spreadLink[this.graphSpreading.spreadGraph.config.aliases.process] && typeof(spreadLink[this.graphSpreading.spreadGraph.config.aliases.process][0]) == 'string') {
+       context[this.graphSpreading.spreadGraph.config.aliases.process] = spreadLink[this.graphSpreading.spreadGraph.config.aliases.process][0];
+       launched = process = context[this.graphSpreading.spreadGraph.config.aliases.process];
+    } else if (spreadLink[this.graphSpreading.spreadGraph.config.aliases.launched] && typeof(spreadLink[this.graphSpreading.spreadGraph.config.aliases.launched][0]) == 'string') {
+      context[this.graphSpreading.spreadGraph.config.aliases.process] = spreadLink[this.graphSpreading.spreadGraph.config.aliases.id];
+      launched = spreadLink[this.graphSpreading.spreadGraph.config.aliases.id];
     } else {
       if (callback) callback();
       return;
     }
-    this.graphSpreading.unspreadFromRemovedSpreadLinkByPrevId(spreadLink.id, context, undefined, () => {
+    this.graphSpreading.unspreadFromRemovedSpreadLinkByPrevId(spreadLink[this.graphSpreading.spreadGraph.config.aliases.id], context, undefined, () => {
       if (process) {
-        this.graphSpreading.spreadGraph.removed.update(spreadLink.id, { process: { remove: context.process }});
+        this.graphSpreading.spreadGraph.removed.update(spreadLink[this.graphSpreading.spreadGraph.config.aliases.id], { [this.graphSpreading.spreadGraph.config.aliases.process]: { remove: context.process }});
       }
       if (callback) callback();
       else this.removeFromLaunched(launched, 'unspread');
@@ -157,10 +157,10 @@ class QueueSpreading {
     this.graphSpreading.spreadNewSpreadLink({
       [this.graphSpreading.spreadGraph.constantField]: spreaderLink[spreaderGraph.constantField],
       [this.graphSpreading.spreadGraph.variableField]: spreaderLink[spreaderGraph.variableField],
-      spreader: spreaderLink.id
-    }, { process: spreaderLink.id }, () => {
+      spreader: spreaderLink[this.graphSpreading.spreadGraph.config.aliases.id]
+    }, { [this.graphSpreading.spreadGraph.config.aliases.process]: spreaderLink[this.graphSpreading.spreadGraph.config.aliases.id] }, () => {
       if (callback) callback();
-      else this.removeFromLaunched(spreaderLink.id, 'spread');
+      else this.removeFromLaunched(spreaderLink[this.graphSpreading.spreadGraph.config.aliases.id], 'spread');
     });
   }
   
@@ -175,11 +175,11 @@ class QueueSpreading {
    */
   unspreadBySpreader(spreaderGraph, spreaderLink, callback) {
     this.graphSpreading.spreadGraph.remove({
-      spreader: spreaderLink.id
+      [this.graphSpreading.spreadGraph.config.aliases.spreader]: spreaderLink[this.graphSpreading.spreadGraph.config.aliases.id]
     }, (error, count) => {
       if (callback) callback();
-      else this.removeFromLaunched(spreaderLink.id, 'unspread');
-    }, { modifier: { process: { add: spreaderLink.id }}});
+      else this.removeFromLaunched(spreaderLink[this.graphSpreading.spreadGraph.config.aliases.id], 'unspread');
+    }, { modifier: { [this.graphSpreading.spreadGraph.config.aliases.process]: { add: spreaderLink[this.graphSpreading.spreadGraph.config.aliases.id] }}});
   }
 }
 

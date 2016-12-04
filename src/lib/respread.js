@@ -16,7 +16,7 @@ function factoryRespreadGraph(ParentClassSpreadGraph) {
      * Parent insert with added 'respread' to launched field. You can override it field in modifier.
      */
     insert(modifier, callback, context) {
-      if (!modifier.launched) modifier.launched = ['respread'];
+      if (!modifier[this.config.aliases.launched]) modifier[this.config.aliases.launched] = ['respread'];
       return super.insert(modifier, callback, context);
     }
     
@@ -25,13 +25,13 @@ function factoryRespreadGraph(ParentClassSpreadGraph) {
      * Adds to launched field custom value from context.
      */
     remove(selector, callback, context) {
-      if (!context) context = { launched: ['respread'] };
-      else if (!context.launched) context.launched = ['respread'];
+      if (!context) context = { [this.config.aliases.launched]: ['respread'] };
+      else if (!context[this.config.aliases.launched]) context[this.config.aliases.launched] = ['respread'];
       else {
-        if (Object.prototype.toString.call(context.launched) === '[object Array]') {
-          context.launched.push('respread');
+        if (Object.prototype.toString.call(context[this.config.aliases.launched]) === '[object Array]') {
+          context[this.config.aliases.launched].push('respread');
         } else {
-          context.launched = [context.launched, 'respread'];
+          context[this.config.aliases.launched] = [context[this.config.aliases.launched], 'respread'];
         }
       }
       return super.remove(selector, callback, context);

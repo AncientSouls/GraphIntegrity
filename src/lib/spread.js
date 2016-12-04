@@ -71,8 +71,8 @@ function factorySpreadGraph(ParentClassGraph) {
      * Parent insert with parser of context.process.
      */
     insert(modifier, callback, context) {
-      if (context && context.process) {
-        modifier.process = [context.process];
+      if (context && context[this.config.aliases.process]) {
+        modifier[this.config.aliases.process] = [context[this.config.aliases.process]];
       }
       return super.insert(modifier, callback, context);
     }
@@ -82,9 +82,9 @@ function factorySpreadGraph(ParentClassGraph) {
      * Adds to process field custom value from context.
      */
     remove(selector, callback, context) {
-      if (context && context.process) {
+      if (context && context[this.config.aliases.process]) {
         if (!context.modifier) context.modifier = {};
-        context.modifier.process = { add: context.process };
+        context.modifier[this.config.aliases.process] = { add: context[this.config.aliases.process] };
       }
       return super.remove(selector, callback, context);
     }

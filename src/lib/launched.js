@@ -14,12 +14,12 @@ function factoryLaunchedGraph(ParentClassGraph) {
      * Parent insert with added launched field. You can override it field in modifier.
      */
     insert(modifier, callback, context) {
-      if (!modifier.launched) modifier.launched = ['spread'];
+      if (!modifier[this.config.aliases.launched]) modifier[this.config.aliases.launched] = ['spread'];
       else {
-        if (Object.prototype.toString.call(modifier.launched) !== '[object Array]') {
-          modifier.launched = [modifier.launched]
+        if (Object.prototype.toString.call(modifier[this.config.aliases.launched]) !== '[object Array]') {
+          modifier[this.config.aliases.launched] = [modifier[this.config.aliases.launched]]
         }
-        modifier.launched.push('spread');
+        modifier[this.config.aliases.launched].push('spread');
       }
       return super.insert(modifier, callback, context);
     }
@@ -28,8 +28,8 @@ function factoryLaunchedGraph(ParentClassGraph) {
      * Parent update, but if source or target changed, then to the launched field will be added values unspread and spread. You can override it field in modifier.
      */
     update(selector, modifier, callback, context) {
-      if (!modifier.hasOwnProperty('launched')) {
-        modifier.launched = { add: ['unspread', 'spread'] };
+      if (!modifier.hasOwnProperty(this.config.aliases.launched)) {
+        modifier[this.config.aliases.launched] = { add: ['unspread', 'spread'] };
       }
       return super.update(selector, modifier, callback, context);
     }
@@ -41,7 +41,7 @@ function factoryLaunchedGraph(ParentClassGraph) {
     remove(selector, callback, context) {
       if (!context) var context = {};
       if (!context.modifier) context.modifier = {};
-      context.modifier.launched = ['unspread'];
+      context.modifier[this.config.aliases.launched] = ['unspread'];
       return super.remove(selector, callback, context);
     }
   }
